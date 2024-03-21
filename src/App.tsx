@@ -1,12 +1,17 @@
-import {Component, createSignal, For} from 'solid-js';
+import {Component, createSignal, For, Index} from 'solid-js';
 import "@thisbeyond/solid-select/style.css";
 import SelectYearSemester from "./components/SelectYearSemester";
 import {createStore} from "solid-js/store";
 
+import {Semester, SemesterKey} from "./types/enum"
+
 const App: Component = () => {
-    let [yearSemester, setYearSemester] = createSignal({
+    let [yearSemester, setYearSemester] = createSignal<{
+        year: number,
+        semester: SemesterKey
+    }>({
         year: 2024,
-        semester: "1학기"
+        semester: "FIRST"
     });
 
     let [keywords, setKeywords] = createStore([] as string[]);
@@ -25,21 +30,24 @@ const App: Component = () => {
                             event.currentTarget.value = "";
                         }}/>
                     </div>
-                    <div style={{display: "flex", "align-self": "flex-start", "margin-left": "1rem"}}>
-                        <For each={keywords}>{(keyword, i) =>
-                            <div style={{"margin-right": "1rem"}}>{keyword}</div>
-                        }</For>
+                    <div style={{display: "flex", "align-self": "flex-start", "margin-left": "1rem", "margin-top": ".3rem"}}>
+                        <Index each={keywords}>{(keyword, i) =>
+                            <div style={{display: "flex"}}>
+                                <div style={{"margin-right": ".3rem"}}>{keyword()}</div>
+                                <button style={{"margin-right": "1rem"}} onclick={() => setKeywords([...keywords.slice(0, i), ...keywords.slice(i + 1)])}>x</button>
+                            </div>
+                        }</Index>
                     </div>
                 </div>
             </div>
+            {/*filter in here*/}
             <div style={{display: "flex", "flex-direction": "column", flex: 1, "justify-content": "space-between",}}>
                 <div>
 
                 </div>
             </div>
-            {yearSemester().year}년도
-            {yearSemester().semester}
-            {/*<Select options={["apple", "banana", "pear", "pineapple", "kiwi"]} multiple={true}/>*/}
+            {/*here is table*/}
+            Showing information about {yearSemester().year}년도 {Semester[yearSemester().semester]}
         </div>
     );
 };
