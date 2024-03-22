@@ -40,13 +40,15 @@
 //     })[],
 // }
 
+import {GradeRuleKey, GradeScaleKey, LanguageKey, SemesterKey, SubjectProcessKey} from "./enum";
+
 interface SubjectQuery {
     year: number,
-    semester: "FIRST" | "SUMMER" | "SECOND" | "WINTER",
+    semester: SemesterKey,
 
-    grade_scale: ("SCORE" | "PF" | "UNKNOWN")[] | undefined,
-    grade_rule: ("RELATIVE" | "ABSOLUTE" | "UNKNOWN")[] | undefined,
-    lang: ("KOREAN" | "ENGLISH" | "MIXED_ENGLISH_KOREAN" | "NATION" | "MIXED_NATION_KOREAN" | "UNKNOWN")[] | undefined,
+    grade_scale: GradeScaleKey[] | undefined,
+    grade_rule: GradeRuleKey[] | undefined,
+    lang: LanguageKey[] | undefined,
 
     is_el: boolean | undefined,
     limited_target: boolean | undefined,
@@ -61,7 +63,7 @@ interface SubjectQuery {
     listen_count: ({ min: number, max: number })[] | undefined,
     remain_count: ({ min: number, max: number })[] | undefined,
 
-    process: ("HAKSA" | "SUKSA" | "SUKBAK" | "UNKNOWN")[] | undefined,
+    process: SubjectProcessKey[] | undefined,
     target: string[] | undefined,
 
     majors: string[] | undefined,

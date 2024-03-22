@@ -1,13 +1,11 @@
 import {Accessor, For, Setter} from "solid-js";
-import {Semester, SemesterKey} from "../types/enum";
+import {Semester, SemesterKey, SemesterKeys} from "../types/enum";
 
 const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; semester: SemesterKey; }>; yearSemester: Accessor<{ year: number, semester: SemesterKey }> }) => {
     const {setYearSemester, yearSemester} = props;
 
     let years = [];
     for (let i = 1972; i <= 2024; i++) years.push(i);
-
-    let semesters = Object.keys(Semester) as SemesterKey[];
 
     return <div style={{display: "flex", "flex-direction": "column", flex: 1, "justify-content": "center"}}>
         <select value={yearSemester().year.toString()} onChange={event => setYearSemester({
@@ -20,7 +18,7 @@ const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; sem
             year: yearSemester().year,
             semester: event.currentTarget.value as SemesterKey,
         })}>
-            <For each={semesters}>{(key) => <option value={key}>{Semester[key]}</option>}</For>
+            <For each={SemesterKeys}>{(key) => <option value={key}>{Semester[key]}</option>}</For>
         </select>
     </div>
 };
