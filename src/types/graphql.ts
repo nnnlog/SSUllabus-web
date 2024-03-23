@@ -53,9 +53,16 @@ export type MultiMajor = {
 
 export type Query = {
   __typename?: 'Query';
+  credits: Array<Scalars['Float']['output']>;
   major_lists: Array<SubjectMajor>;
   multi_major_lists: Array<MultiMajor>;
   subject: Array<Subject>;
+};
+
+
+export type QueryCreditsArgs = {
+  semester: Semester;
+  year: Scalars['Int']['input'];
 };
 
 
@@ -184,7 +191,7 @@ export type CurrentSemesterDataQueryVariables = Exact<{
 }>;
 
 
-export type CurrentSemesterDataQuery = { __typename?: 'Query', major_lists: Array<{ __typename?: 'SubjectMajor', isu_name?: string | null, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
+export type CurrentSemesterDataQuery = { __typename?: 'Query', credits: Array<number>, major_lists: Array<{ __typename?: 'SubjectMajor', isu_name?: string | null, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
 
 
 export const SubjectsDocument = gql`
@@ -256,6 +263,7 @@ export const CurrentSemesterDataDocument = gql`
     detail_department
     isu_name
   }
+  credits(year: $year, semester: $semester)
 }
     `;
 
