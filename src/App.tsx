@@ -3,11 +3,13 @@ import "@thisbeyond/solid-select/style.css";
 import SelectYearSemester from "./components/filter/SelectYearSemester";
 import {createStore} from "solid-js/store";
 
-import {GradeScaleValue, SemesterValue} from "./types/enum"
+import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue, SubjectProcessValue} from "./types/enum"
 import FilterOption from "./components/filter/filterOption";
 import {getSubjects} from "./graphql";
 import SubjectTable from "./components/SubjectTable";
-import {QuerySubjectArgs, Semester, Subject, SubjectsQueryVariables} from "./types/graphql";
+import {Semester, Subject, SubjectProcess, SubjectsQueryVariables} from "./types/graphql";
+
+import "./App.module.css"
 
 const App: Component = () => {
     let [yearSemester, setYearSemester] = createSignal<{
@@ -25,6 +27,7 @@ const App: Component = () => {
         get semester() {
             return yearSemester().semester;
         },
+        process: [SubjectProcess.Haksa],
     });
 
     let [subjects, setSubjects] = createSignal<Subject[]>([]);
@@ -68,18 +71,46 @@ const App: Component = () => {
             </div>
             {/*filter in here*/}
             <div style={{display: "flex", "flex-direction": "column", flex: 1, "justify-content": "space-between",}}>
-                <div>
-                    <FilterOption
-                        text={GradeScaleValue}
-                        initialValue={query.grade_scale ?? []}
-                        onChange={v => {
-                            if (v.length === 0) setQuery("grade_scale", undefined);
-                            else setQuery("grade_scale", v);
-                        }}
-                        placeholder={"성적 스케일 필터 (미입력 시 모두)"}
-                        filterName={"성적 스케일 필터 : "}
-                    ></FilterOption>
-                </div>
+                <FilterOption
+                    text={GradeScaleValue}
+                    initialValue={query.grade_scale ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("grade_scale", undefined);
+                        else setQuery("grade_scale", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"성적 스케일 : "}
+                ></FilterOption>
+                <FilterOption
+                    text={GradeRuleValue}
+                    initialValue={query.grade_rule ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("grade_rule", undefined);
+                        else setQuery("grade_rule", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"성적 평가 방식 : "}
+                ></FilterOption>
+                <FilterOption
+                    text={LanguageValue}
+                    initialValue={query.lang ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("lang", undefined);
+                        else setQuery("lang", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"강의 언어 : "}
+                ></FilterOption>
+                <FilterOption
+                    text={SubjectProcessValue}
+                    initialValue={query.process ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("process", undefined);
+                        else setQuery("process", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"과정 : "}
+                ></FilterOption>
             </div>
             <button onclick={fetchData}>
                 조회
