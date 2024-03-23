@@ -7,7 +7,7 @@ import {GradeScaleValue, SemesterValue} from "./types/enum"
 import FilterOption from "./components/filter/filterOption";
 import {getSubjects} from "./graphql";
 import SubjectTable from "./components/SubjectTable";
-import {QuerySubjectArgs, Semester, Subject} from "./types/graphql";
+import {QuerySubjectArgs, Semester, Subject, SubjectsQueryVariables} from "./types/graphql";
 
 const App: Component = () => {
     let [yearSemester, setYearSemester] = createSignal<{
@@ -18,7 +18,7 @@ const App: Component = () => {
         semester: Semester.First
     });
 
-    let [query, setQuery] = createStore<QuerySubjectArgs>({
+    let [query, setQuery] = createStore<SubjectsQueryVariables>({
         get year() {
             return yearSemester().year;
         },
@@ -30,24 +30,7 @@ const App: Component = () => {
     let [subjects, setSubjects] = createSignal<Subject[]>([]);
 
     const fetchData = async () => {
-        let res = (await getSubjects(query, [
-            "code",
-            "name",
-            "professor",
-            "bunban",
-            "listen_count",
-            "remain_count",
-            "credit",
-            "target",
-
-            "majors",
-            "multi_majors",
-            "open_department",
-            // "time_place",
-            "grade_scale",
-            "grade_rule",
-            "lang",
-        ])).subject;
+        let res = (await getSubjects(query)).subject;
         setSubjects(res);
     };
 
@@ -88,7 +71,7 @@ const App: Component = () => {
                 <div>
                     <FilterOption
                         text={GradeScaleValue}
-                        initialValue={query.grade_scale || []}
+                        initialValue={query.grade_scale ?? []}
                         onChange={v => {
                             if (v.length === 0) setQuery("grade_scale", undefined);
                             else setQuery("grade_scale", v);
