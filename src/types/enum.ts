@@ -1,53 +1,43 @@
-export const Semester = {
-    FIRST: '1학기',
-    SUMMER: '여름학기',
-    SECOND: '2학기',
-    WINTER: '겨울학기',
+import {GradeRule, GradeScale, Language, Semester, SubjectProcess} from "./graphql";
+
+export const SemesterValue = {
+    [Semester.First]: '1학기',
+    [Semester.Summer]: '여름학기',
+    [Semester.Second]: '2학기',
+    [Semester.Winter]: '겨울학기',
 } as const;
+export const SemesterValues = Object.keys(SemesterValue) as Semester[];
 
-type SemesterKey = keyof typeof Semester;
-export const SemesterKeys = Object.keys(Semester) as SemesterKey[];
-
-export const GradeScale = {
-    SCORE: "점수 100기준 입력",
-    PF: "Pass/Fail 입력",
-    UNKNOWN: ""
+export const GradeScaleValue = {
+    [GradeScale.Score]: "점수 100기준 입력",
+    [GradeScale.Pf]: "Pass/Fail 입력",
+    [GradeScale.Unknown]: "(알수없음)"
 } as const;
-
-type GradeScaleKey = keyof typeof GradeScale;
-export const GradeScaleKeys = Object.keys(GradeScale) as GradeScaleKey[];
+export const GradeScaleValues = Object.keys(GradeScaleValue) as GradeScale[];
 
 
-export const GradeRule = {
-    RELATIVE: "상대평가",
-    ABSOLUTE: "절대평가",
-    UNKNOWN: ""
+export const GradeRuleValue = {
+    [GradeRule.Relative]: "상대평가",
+    [GradeRule.Absolute]: "절대평가",
+    [GradeRule.Unknown]: "(알수없음)"
 } as const;
-
-type GradeRuleKey = keyof typeof GradeRule;
-export const GradeRuleKeys = Object.keys(GradeRule) as GradeScaleKey[];
+export const GradeRuleValues = Object.keys(GradeRuleValue) as GradeRule[];
 
 
-export const Language = {
-    KOREAN: "한국어",
-    ENGLISH: "영어",
-    MIXED_ENGLISH_KOREAN: "영어-한국어혼합",
-    NATION: "원어",
-    MIXED_NATION_KOREAN: "원어-한국어혼합",
-    UNKNOWN: ""
+export const LanguageValue = {
+    [Language.Korean]: "한국어",
+    [Language.English]: "영어",
+    [Language.MixedEnglishKorean]: "영어-한국어혼합",
+    [Language.Nation]: "원어",
+    [Language.MixedNationKorean]: "원어-한국어혼합",
+    [Language.Unknown]: "(알수없음)"
 } as const;
+export const LanguageValues = Object.keys(LanguageValue) as Language[];
 
-type LanguageKey = keyof typeof Language;
-export const LanguageKeys = Object.keys(Language) as GradeScaleKey[];
-
-export const SubjectProcess = {
-    HAKSA: "학사과정",
-    SUKSA: "석사과정",
-    SUKBAK: "석박과정",
-    UNKNOWN: ""
+export const SubjectProcessValue = {
+    [SubjectProcess.Haksa]: "학사과정",
+    [SubjectProcess.Suksa]: "석사과정",
+    [SubjectProcess.Sukbak]: "석박과정",
+    [SubjectProcess.Unknown]: "(알수없음)"
 } as const;
-
-type SubjectProcessKey = keyof typeof SubjectProcess;
-export const SubjectProcessKeys = Object.keys(SubjectProcess) as GradeScaleKey[];
-
-export type {SemesterKey, GradeScaleKey, GradeRuleKey, LanguageKey, SubjectProcessKey};
+export const SubjectProcessValues = Object.keys(SubjectProcessValue) as SubjectProcess[];

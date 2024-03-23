@@ -1,7 +1,8 @@
 import {Accessor, For, Setter} from "solid-js";
-import {Semester, SemesterKey, SemesterKeys} from "../types/enum";
+import {SemesterValue, SemesterValues} from "../../types/enum";
+import {Semester} from "../../types/graphql";
 
-const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; semester: SemesterKey; }>; yearSemester: Accessor<{ year: number, semester: SemesterKey }> }) => {
+const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; semester: Semester; }>; yearSemester: Accessor<{ year: number, semester: Semester }> }) => {
     const {setYearSemester, yearSemester} = props;
 
     let years = [];
@@ -16,9 +17,9 @@ const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; sem
         </select>
         <select style={{"margin-top": ".3rem"}} value={yearSemester().semester} onChange={event => setYearSemester({
             year: yearSemester().year,
-            semester: event.currentTarget.value as SemesterKey,
+            semester: event.currentTarget.value as Semester,
         })}>
-            <For each={SemesterKeys}>{(key) => <option value={key}>{Semester[key]}</option>}</For>
+            <For each={SemesterValues}>{(key) => <option value={key}>{SemesterValue[key]}</option>}</For>
         </select>
     </div>
 };

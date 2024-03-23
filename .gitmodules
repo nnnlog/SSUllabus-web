@@ -1,0 +1,6 @@
+[submodule "src/types"]
+	path = src/types
+	url = https://github.com/nnnlog/SSUllabus-type
+[submodule "src/types/common"]
+	path = src/types/common
+	url = https://github.com/nnnlog/SSUllabus-type

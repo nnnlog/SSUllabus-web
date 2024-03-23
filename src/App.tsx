@@ -1,20 +1,55 @@
-import {Component, createSignal, For, Index} from 'solid-js';
+import {Component, createSignal, Index} from 'solid-js';
 import "@thisbeyond/solid-select/style.css";
-import SelectYearSemester from "./components/SelectYearSemester";
+import SelectYearSemester from "./components/filter/SelectYearSemester";
 import {createStore} from "solid-js/store";
 
-import {Semester, SemesterKey} from "./types/enum"
+import {GradeScaleValue, SemesterValue} from "./types/enum"
+import FilterOption from "./components/filter/filterOption";
+import {getSubjects} from "./graphql";
+import SubjectTable from "./components/SubjectTable";
+import {QuerySubjectArgs, Semester, Subject} from "./types/graphql";
 
 const App: Component = () => {
     let [yearSemester, setYearSemester] = createSignal<{
         year: number,
-        semester: SemesterKey
+        semester: Semester
     }>({
         year: 2024,
-        semester: "FIRST"
+        semester: Semester.First
     });
 
-    let [keywords, setKeywords] = createStore([] as string[]);
+    let [query, setQuery] = createStore<QuerySubjectArgs>({
+        get year() {
+            return yearSemester().year;
+        },
+        get semester() {
+            return yearSemester().semester;
+        },
+    });
+
+    let [subjects, setSubjects] = createSignal<Subject[]>([]);
+
+    const fetchData = async () => {
+        let res = (await getSubjects(query, [
+            "code",
+            "name",
+            "professor",
+            "bunban",
+            "listen_count",
+            "remain_count",
+            "credit",
+            "target",
+
+            "majors",
+            "multi_majors",
+            "open_department",
+            // "time_place",
+            "grade_scale",
+            "grade_rule",
+            "lang",
+        ])).subject;
+        setSubjects(res);
+    };
 
     return (
         <div style={{width: "90%", margin: "3rem auto 0 auto"}}>
@@ -25,16 +60,24 @@ const App: Component = () => {
                         <div style={{"margin-right": "0.3rem"}}>검색어 :</div>
                         <input id={"search"} placeholder={"검색어 키워드를 입력하세요. (과목명, 과목코드, 교수명 대상 검색)"} style={{flex: 1,}} onkeyup={event => {
                             if (event.code !== "Enter") return;
-                            if (keywords.includes(event.currentTarget.value)) return;
-                            setKeywords([...keywords, event.currentTarget.value]);
+                            if (event.currentTarget.value.length === 0) return;
+
+                            if (query.keyword) {
+                                if (query.keyword.includes(event.currentTarget.value)) return;
+                                setQuery("keyword", query.keyword.length, event.currentTarget.value);
+                            } else {
+                                setQuery("keyword", [event.currentTarget.value]);
+                            }
                             event.currentTarget.value = "";
                         }}/>
                     </div>
                     <div style={{display: "flex", "align-self": "flex-start", "margin-left": "1rem", "margin-top": ".3rem"}}>
-                        <Index each={keywords}>{(keyword, i) =>
+                        <Index each={query.keyword}>{(keyword, i) =>
                             <div style={{display: "flex"}}>
                                 <div style={{"margin-right": ".3rem"}}>{keyword()}</div>
-                                <button style={{"margin-right": "1rem"}} onclick={() => setKeywords([...keywords.slice(0, i), ...keywords.slice(i + 1)])}>x</button>
+                                <button style={{"margin-right": "1rem"}}
+                                        onclick={() => setQuery("keyword", value => value?.length === 1 ? undefined : [...value!.slice(0, i), ...value!.slice(i + 1)])}>x
+                                </button>
                             </div>
                         }</Index>
                     </div>
@@ -43,11 +86,25 @@ const App: Component = () => {
             {/*filter in here*/}
             <div style={{display: "flex", "flex-direction": "column", flex: 1, "justify-content": "space-between",}}>
                 <div>
-
+                    <FilterOption
+                        text={GradeScaleValue}
+                        initialValue={query.grade_scale || []}
+                        onChange={v => {
+                            if (v.length === 0) setQuery("grade_scale", undefined);
+                            else setQuery("grade_scale", v);
+                        }}
+                        placeholder={"성적 스케일 필터 (미입력 시 모두)"}
+                        filterName={"성적 스케일 필터 : "}
+                    ></FilterOption>
                 </div>
             </div>
-            {/*here is table*/}
-            Showing information about {yearSemester().year}년도 {Semester[yearSemester().semester]}
+            <button onclick={fetchData}>
+                조회
+            </button>
+            <div>
+                Showing information about {yearSemester().year}년도 {SemesterValue[yearSemester().semester]}
+            </div>
+            <SubjectTable subjects={subjects}/>
         </div>
     );
 };
