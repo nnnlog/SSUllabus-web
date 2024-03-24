@@ -2,7 +2,6 @@ import {Accessor, Component, createEffect, createMemo, createSignal, onCleanup, 
 import {CurrentSemesterDataQuery, LectureRoomTimeTable, LectureRoomTimeTableQueryVariables, Semester, Subject, SubjectsSimpleQuery} from "../types/graphql";
 import {getCurrentSemesterData, getLectureRoomTimeTable, getSubjectsSimple} from "../graphql";
 import SelectYearSemester from "../components/filter/SelectYearSemester";
-import {SemesterValue} from "../types/enum";
 import FilterSingleOption from "../components/filter/filterSingleOption";
 
 const SearchSubject: Component = () => {
@@ -49,37 +48,14 @@ const SearchSubject: Component = () => {
         return data.reduce((a, b) => ({...a, [b]: b}), {});
     });
 
-    createEffect(fetchCurrentSemesterData, [yearSemester()]);
+    createEffect(fetchCurrentSemesterData, yearSemester());
 
     const [data, setData] = createSignal<LectureRoomTimeTable[]>([]);
-    createEffect(
-        async () => {
-            if (building() === "" || lectureRoom() === "") return;
-            return setData(
-                (await getLectureRoomTimeTable(query())).lecture_room_timetable.find(a => a.place === query().place[0])?.value ?? []
-            )
-        }, [query()]);
-
     const [subjectsData, setSubjectsData] = createSignal<SubjectsSimpleQuery>();
-    createEffect(async () => {
-        setSubjectsData(await getSubjectsSimple({
-            year: yearSemester().year,
-            semester: yearSemester().semester,
-            code: data().map(a => a.code)
-        }));
-    }, data());
-
-    const subjectsDataKey: Accessor<{ [name: string]: Subject }> = createMemo(() => {
-        return subjectsData()?.subject.reduce((a, b) => ({
-            ...a,
-            [b.code]: b
-        }), {}) ?? {};
-    });
-
-    const parse = (a: string) => {
-        let [b, c] = a.split(":");
-        return parseInt(b) * 60 + parseInt(c);
-    };
+    const subjectsDataKey: Accessor<{ [name: string]: Subject }> = createMemo(() => subjectsData()?.subject?.reduce((a, b) => ({
+        ...a,
+        [b.code]: b
+    }), {}) ?? {});
 
     let canvas: HTMLCanvasElement | undefined;
     const draw = () => {
@@ -106,7 +82,7 @@ const SearchSubject: Component = () => {
         let colors = [
             "#072448", "#3e4491", "#ffcb00", "#f8aa4b", "#ff6150",
             "#e74645", "#fb7756", "#facd60", "#cac751", "#1ac0c6",
-            "#f9b4ab", "#f9b4ab", "#264e70", "#679186", "#679186",
+            "#f9b4ab", "#fdebd3", "#264e70", "#679186", "#679186",
         ];
         let colorTable: { [key: string]: string } = {};
 
@@ -184,7 +160,26 @@ const SearchSubject: Component = () => {
         });
     };
 
-    createEffect(draw, subjectsDataKey());
+    createEffect(async () => {
+        if (place()[0].trim() === "") return;
+
+        setData(
+            (await getLectureRoomTimeTable(query())).lecture_room_timetable.find(a => a.place === query().place[0])?.value ?? []
+        );
+
+        setSubjectsData(await getSubjectsSimple({
+            year: yearSemester().year,
+            semester: yearSemester().semester,
+            code: data().map(a => a.code)
+        }));
+
+        draw();
+    });
+
+    const parse = (a: string) => {
+        let [b, c] = a.split(":");
+        return parseInt(b) * 60 + parseInt(c);
+    };
 
     onMount(() => window.addEventListener("resize", draw, false));
     onCleanup(() => window.removeEventListener("resize", draw));
