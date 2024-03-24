@@ -4,7 +4,7 @@ import {createStore} from "solid-js/store";
 import {getCurrentSemesterData, getSubjects} from "../graphql";
 import SelectYearSemester from "../components/filter/SelectYearSemester";
 import FilterMultipleOption from "../components/filter/filterMultipleOption";
-import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue} from "../types/enum";
+import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue, SubjectProcessValue} from "../types/enum";
 import SubjectTable from "../components/SubjectTable";
 
 const SearchSubject: Component = () => {
@@ -118,6 +118,16 @@ const SearchSubject: Component = () => {
                     }}
                     placeholder={"(모두)"}
                     filterName={"강의 언어 : "}
+                ></FilterMultipleOption>
+                <FilterMultipleOption
+                    text={SubjectProcessValue}
+                    initialValue={query.process ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("process", undefined);
+                        else setQuery("process", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"과정 : "}
                 ></FilterMultipleOption>
                 <FilterMultipleOption
                     text={currentSemesterData().credits.reduce((a, b) => ({...a, [b]: b.toString()}), {})}
