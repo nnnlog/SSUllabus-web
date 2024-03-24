@@ -214,6 +214,15 @@ export type SubjectsSyllabusQueryVariables = Exact<{
 
 export type SubjectsSyllabusQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', syllabus?: string | null }> };
 
+export type SubjectsSimpleQueryVariables = Exact<{
+  year: Scalars['Int']['input'];
+  semester: Semester;
+  code: Array<Scalars['String']['input']>;
+}>;
+
+
+export type SubjectsSimpleQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', code: string, name: string, professor?: string | null }> };
+
 export type CurrentSemesterDataQueryVariables = Exact<{
   year: Scalars['Int']['input'];
   semester: Semester;
@@ -289,6 +298,15 @@ export const SubjectsSyllabusDocument = gql`
   }
 }
     `;
+export const SubjectsSimpleDocument = gql`
+    query subjectsSimple($year: Int!, $semester: Semester!, $code: [String!]!) {
+  subject(year: $year, semester: $semester, code: $code) {
+    code
+    name
+    professor
+  }
+}
+    `;
 export const CurrentSemesterDataDocument = gql`
     query currentSemesterData($year: Int!, $semester: Semester!) {
   major_lists(year: $year, semester: $semester) {
@@ -331,6 +349,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     subjectsSyllabus(variables: SubjectsSyllabusQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<SubjectsSyllabusQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<SubjectsSyllabusQuery>(SubjectsSyllabusDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'subjectsSyllabus', 'query', variables);
+    },
+    subjectsSimple(variables: SubjectsSimpleQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<SubjectsSimpleQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SubjectsSimpleQuery>(SubjectsSimpleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'subjectsSimple', 'query', variables);
     },
     currentSemesterData(variables: CurrentSemesterDataQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentSemesterDataQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CurrentSemesterDataQuery>(CurrentSemesterDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentSemesterData', 'query', variables);

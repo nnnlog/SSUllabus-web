@@ -7,7 +7,7 @@ import searchSubject from "./views/SearchSubject";
 
 const App = (props: RouteSectionProps) => {
     return <>
-        <div>
+        <div style={{display: "flex", "flex-direction": "column"}}>
             <a href={"/"}>과목 조회</a>
             <a href={"/lecture_room"}>강의실별 시간표 조회</a>
         </div>

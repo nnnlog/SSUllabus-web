@@ -7,13 +7,11 @@ import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} fro
 const SubjectTable = (props: {
     subjects: Accessor<Subject[]>,
 }) => {
-    const {subjects} = props;
-
-    const [expand, setExpand] = createStore(subjects().map(() => false));
+    const [expand, setExpand] = createStore(props.subjects().map(() => false));
 
     createEffect(() => {
-        setExpand(subjects().map(() => false));
-    }, subjects());
+        setExpand(props.subjects().map(() => false));
+    }, props.subjects());
 
     const columnHelper = createColumnHelper<Subject>();
     const columns = [
@@ -62,7 +60,7 @@ const SubjectTable = (props: {
     const table = createSolidTable({
         columns,
         get data() {
-            return subjects();
+            return props.subjects();
         },
         getCoreRowModel: getCoreRowModel(),
     });
