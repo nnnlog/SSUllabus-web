@@ -134,7 +134,7 @@ export type Subject = {
 export type SubjectMajor = {
   __typename?: 'SubjectMajor';
   is_main: Scalars['Boolean']['output'];
-  isu_name?: Maybe<Scalars['String']['output']>;
+  isu_name: Scalars['String']['output'];
 };
 
 export enum SubjectProcess {
@@ -191,7 +191,7 @@ export type CurrentSemesterDataQueryVariables = Exact<{
 }>;
 
 
-export type CurrentSemesterDataQuery = { __typename?: 'Query', credits: Array<number>, major_lists: Array<{ __typename?: 'SubjectMajor', isu_name?: string | null, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
+export type CurrentSemesterDataQuery = { __typename?: 'Query', credits: Array<number>, major_lists: Array<{ __typename?: 'SubjectMajor', isu_name: string, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
 
 
 export const SubjectsDocument = gql`

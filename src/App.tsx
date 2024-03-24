@@ -1,18 +1,18 @@
-import {Component, createSignal, Index} from 'solid-js';
+import {Component, createEffect, createMemo, createSignal, Index} from 'solid-js';
 import "@thisbeyond/solid-select/style.css";
 import SelectYearSemester from "./components/filter/SelectYearSemester";
 import {createStore} from "solid-js/store";
 
-import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue, SubjectProcessValue} from "./types/enum"
+import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue} from "./types/enum"
 import FilterOption from "./components/filter/filterOption";
-import {getSubjects} from "./graphql";
+import {getCurrentSemesterData, getSubjects} from "./graphql";
 import SubjectTable from "./components/SubjectTable";
-import {Semester, Subject, SubjectProcess, SubjectsQueryVariables} from "./types/graphql";
+import {CurrentSemesterDataQuery, Semester, Subject, SubjectProcess, SubjectsQueryVariables} from "./types/graphql";
 
 import "./App.module.css"
 
 const App: Component = () => {
-    let [yearSemester, setYearSemester] = createSignal<{
+    const [yearSemester, setYearSemester] = createSignal<{
         year: number,
         semester: Semester
     }>({
@@ -20,7 +20,7 @@ const App: Component = () => {
         semester: Semester.First
     });
 
-    let [query, setQuery] = createStore<SubjectsQueryVariables>({
+    const [query, setQuery] = createStore<SubjectsQueryVariables>({
         get year() {
             return yearSemester().year;
         },
@@ -30,12 +30,33 @@ const App: Component = () => {
         process: [SubjectProcess.Haksa],
     });
 
-    let [subjects, setSubjects] = createSignal<Subject[]>([]);
+    const [subjects, setSubjects] = createSignal<Subject[]>([]);
 
-    const fetchData = async () => {
+    const fetchSubjectData = async () => {
         let res = (await getSubjects(query)).subject;
         setSubjects(res);
     };
+
+    const [currentSemesterData, setCurrentSemesterData] = createSignal<CurrentSemesterDataQuery>({
+        credits: [],
+        major_lists: [],
+        multi_major_lists: [],
+    });
+
+    const fetchCurrentSemesterData = async () => setCurrentSemesterData(await getCurrentSemesterData({
+        year: yearSemester().year,
+        semester: yearSemester().semester,
+    }));
+
+    const majorLists = createMemo(() => {
+        return currentSemesterData().major_lists.reduce((a, b) => ({...a, [b.isu_name]: `(${b.is_main ? "주" : "다"}) ${b.isu_name}`}), {});
+    }, [currentSemesterData()]);
+
+    const multiMajorLists = createMemo(() => {
+        return currentSemesterData().multi_major_lists.reduce((a, b) => ({...a, [b.isu_name]: b.isu_name}), {});
+    }, [currentSemesterData()]);
+
+    createEffect(fetchCurrentSemesterData, [yearSemester()]);
 
     return (
         <div style={{width: "90%", margin: "3rem auto 0 auto"}}>
@@ -102,17 +123,37 @@ const App: Component = () => {
                     filterName={"강의 언어 : "}
                 ></FilterOption>
                 <FilterOption
-                    text={SubjectProcessValue}
-                    initialValue={query.process ?? []}
+                    text={currentSemesterData().credits.reduce((a, b) => ({...a, [b]: b.toString()}), {})}
+                    initialValue={query.credit ?? []}
                     onChange={v => {
-                        if (v.length === 0) setQuery("process", undefined);
-                        else setQuery("process", v);
+                        if (v.length === 0) setQuery("credit", undefined);
+                        else setQuery("credit", v);
                     }}
                     placeholder={"(모두)"}
-                    filterName={"과정 : "}
+                    filterName={"학점 : "}
+                ></FilterOption>
+                <FilterOption
+                    text={majorLists()}
+                    initialValue={query.majors ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("majors", undefined);
+                        else setQuery("majors", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"이수구분 : "}
+                ></FilterOption>
+                <FilterOption
+                    text={multiMajorLists()}
+                    initialValue={query.multi_majors ?? []}
+                    onChange={v => {
+                        if (v.length === 0) setQuery("multi_majors", undefined);
+                        else setQuery("multi_majors", v);
+                    }}
+                    placeholder={"(모두)"}
+                    filterName={"타전공인정 : "}
                 ></FilterOption>
             </div>
-            <button onclick={fetchData}>
+            <button onclick={fetchSubjectData}>
                 조회
             </button>
             <div>
