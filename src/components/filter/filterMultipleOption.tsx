@@ -1,12 +1,7 @@
 import { Select } from "@thisbeyond/solid-select";
 import {createSignal} from "solid-js";
 
-type MultiSelectValues<T> = {
-   value: T,
-   text: string,
-};
-
-const FilterOption = <T, >(props: {
+const FilterMultipleOption = <T, >(props: {
     text: any,
     initialValue: T[],
     onChange: (selected: T[]) => any,
@@ -16,9 +11,6 @@ const FilterOption = <T, >(props: {
 }) => {
     const {initialValue, onChange, placeholder, filterName} = props;
 
-    // let values = Object.keys(text) as T[];
-
-    // const values = Object.keys(text) as T[];
     const [selectedValue, setSelectedValue] = createSignal(initialValue);
     const [input, setInput] = createSignal("");
 
@@ -43,5 +35,4 @@ const FilterOption = <T, >(props: {
     </div>
 };
 
-export default FilterOption;
-export type {MultiSelectValues};
+export default FilterMultipleOption;

@@ -43,6 +43,20 @@ export enum Language {
   Unknown = 'UNKNOWN'
 }
 
+export type LectureRoomTimeTable = {
+  __typename?: 'LectureRoomTimeTable';
+  code: Scalars['String']['output'];
+  day: Scalars['String']['output'];
+  time_end: Scalars['String']['output'];
+  time_start: Scalars['String']['output'];
+};
+
+export type LectureRoomTimeTableGroup = {
+  __typename?: 'LectureRoomTimeTableGroup';
+  place: Scalars['String']['output'];
+  value: Array<LectureRoomTimeTable>;
+};
+
 export type MultiMajor = {
   __typename?: 'MultiMajor';
   department: Scalars['String']['output'];
@@ -54,6 +68,8 @@ export type MultiMajor = {
 export type Query = {
   __typename?: 'Query';
   credits: Array<Scalars['Float']['output']>;
+  lecture_room_timetable: Array<LectureRoomTimeTableGroup>;
+  lecture_rooms: Array<Scalars['String']['output']>;
   major_lists: Array<SubjectMajor>;
   multi_major_lists: Array<MultiMajor>;
   subject: Array<Subject>;
@@ -61,6 +77,19 @@ export type Query = {
 
 
 export type QueryCreditsArgs = {
+  semester: Semester;
+  year: Scalars['Int']['input'];
+};
+
+
+export type QueryLecture_Room_TimetableArgs = {
+  place: Array<Scalars['String']['input']>;
+  semester: Semester;
+  year: Scalars['Int']['input'];
+};
+
+
+export type QueryLecture_RoomsArgs = {
   semester: Semester;
   year: Scalars['Int']['input'];
 };
@@ -127,8 +156,16 @@ export type Subject = {
   semester: Semester;
   syllabus?: Maybe<Scalars['String']['output']>;
   target?: Maybe<Scalars['String']['output']>;
-  time_place?: Maybe<Array<TimePlaceDb_Subject>>;
+  time_place?: Maybe<Array<SubjectLectureRoomTime>>;
   year: Scalars['Int']['output'];
+};
+
+export type SubjectLectureRoomTime = {
+  __typename?: 'SubjectLectureRoomTime';
+  day: Scalars['String']['output'];
+  place?: Maybe<Scalars['String']['output']>;
+  time_end: Scalars['String']['output'];
+  time_start: Scalars['String']['output'];
 };
 
 export type SubjectMajor = {
@@ -143,14 +180,6 @@ export enum SubjectProcess {
   Suksa = 'SUKSA',
   Unknown = 'UNKNOWN'
 }
-
-export type TimePlaceDb_Subject = {
-  __typename?: 'TimePlaceDB_Subject';
-  day?: Maybe<Scalars['String']['output']>;
-  place?: Maybe<Scalars['String']['output']>;
-  time_end?: Maybe<Scalars['String']['output']>;
-  time_start?: Maybe<Scalars['String']['output']>;
-};
 
 export type SubjectsQueryVariables = Exact<{
   year: Scalars['Int']['input'];
@@ -174,7 +203,7 @@ export type SubjectsQueryVariables = Exact<{
 }>;
 
 
-export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'TimePlaceDB_Subject', place?: string | null, day?: string | null, time_start?: string | null, time_end?: string | null }> | null }> };
+export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'SubjectLectureRoomTime', place?: string | null, day: string, time_start: string, time_end: string }> | null }> };
 
 export type SubjectsSyllabusQueryVariables = Exact<{
   year: Scalars['Int']['input'];
@@ -191,7 +220,16 @@ export type CurrentSemesterDataQueryVariables = Exact<{
 }>;
 
 
-export type CurrentSemesterDataQuery = { __typename?: 'Query', credits: Array<number>, major_lists: Array<{ __typename?: 'SubjectMajor', isu_name: string, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
+export type CurrentSemesterDataQuery = { __typename?: 'Query', credits: Array<number>, lecture_rooms: Array<string>, major_lists: Array<{ __typename?: 'SubjectMajor', isu_name: string, is_main: boolean }>, multi_major_lists: Array<{ __typename?: 'MultiMajor', univ: string, department: string, detail_department: string, isu_name: string }> };
+
+export type LectureRoomTimeTableQueryVariables = Exact<{
+  year: Scalars['Int']['input'];
+  semester: Semester;
+  place: Array<Scalars['String']['input']>;
+}>;
+
+
+export type LectureRoomTimeTableQuery = { __typename?: 'Query', lecture_room_timetable: Array<{ __typename?: 'LectureRoomTimeTableGroup', place: string, value: Array<{ __typename?: 'LectureRoomTimeTable', code: string, day: string, time_start: string, time_end: string }> }> };
 
 
 export const SubjectsDocument = gql`
@@ -264,6 +302,20 @@ export const CurrentSemesterDataDocument = gql`
     isu_name
   }
   credits(year: $year, semester: $semester)
+  lecture_rooms(year: $year, semester: $semester)
+}
+    `;
+export const LectureRoomTimeTableDocument = gql`
+    query lectureRoomTimeTable($year: Int!, $semester: Semester!, $place: [String!]!) {
+  lecture_room_timetable(year: $year, semester: $semester, place: $place) {
+    place
+    value {
+      code
+      day
+      time_start
+      time_end
+    }
+  }
 }
     `;
 
@@ -282,6 +334,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     currentSemesterData(variables: CurrentSemesterDataQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentSemesterDataQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CurrentSemesterDataQuery>(CurrentSemesterDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentSemesterData', 'query', variables);
+    },
+    lectureRoomTimeTable(variables: LectureRoomTimeTableQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LectureRoomTimeTableQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LectureRoomTimeTableQuery>(LectureRoomTimeTableDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'lectureRoomTimeTable', 'query', variables);
     }
   };
 }
