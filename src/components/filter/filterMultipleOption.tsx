@@ -12,7 +12,7 @@ const FilterMultipleOption = <T extends string, >(props: {
     const [selectedValue, setSelectedValue] = createSignal(props.initialValue);
     const [input, setInput] = createSignal("");
 
-    const values = createMemo(() => (Object.keys(props.text) as T[]).filter(k => !selectedValue().includes(k) && (input().length === 0 || props.text[k].includes(input()))).sort((a, b) => a.localeCompare(b)));
+    const values = createMemo(() => (Object.keys(props.text) as T[]).filter(k => !selectedValue().includes(k) && (input().length === 0 || props.text[k].includes(input()))).sort((a, b) => props.text[a].localeCompare(props.text[b])));
 
     return <div style={{display: "flex", "justify-content": "space-between", "align-items": "center", "font-size": "15px"}}>
         <div>{props.filterName}</div>

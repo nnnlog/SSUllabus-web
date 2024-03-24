@@ -100,7 +100,7 @@ const SubjectTable = (props: {
             <>
                 <tr>
                     <Index each={row().getVisibleCells()}>{cell =>
-                        <td>{flexRender(cell().column.columnDef.cell, cell().getContext())}</td>
+                        <td style={{"text-align": "center"}}>{flexRender(cell().column.columnDef.cell, cell().getContext())}</td>
                     }</Index>
                 </tr>
                 <Show when={expand[row().index]}>

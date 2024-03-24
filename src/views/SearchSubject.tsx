@@ -46,7 +46,7 @@ const SearchSubject: Component = () => {
     }));
 
     const majorLists = createMemo(() => {
-        return currentSemesterData().major_lists.reduce((a, b) => ({...a, [b.isu_name]: `(${b.is_main ? "주" : "다"}) ${b.isu_name}`}), {});
+        return currentSemesterData().major_lists.reduce((a, b) => ({...a, [b.isu_name]: `${b.is_main ? " " : "(다전공) "}${b.isu_name}`}), {}); // for first sort
     });
 
     const multiMajorLists = createMemo(() => {

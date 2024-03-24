@@ -203,7 +203,7 @@ export type SubjectsQueryVariables = Exact<{
 }>;
 
 
-export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'SubjectLectureRoomTime', place?: string | null, day: string, time_start: string, time_end: string }> | null }> };
+export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, professor?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'SubjectLectureRoomTime', place?: string | null, day: string, time_start: string, time_end: string }> | null }> };
 
 export type SubjectsSyllabusQueryVariables = Exact<{
   year: Scalars['Int']['input'];
@@ -275,6 +275,7 @@ export const SubjectsDocument = gql`
     bunban
     process
     open_department
+    professor
     credit
     listen_count
     remain_count
