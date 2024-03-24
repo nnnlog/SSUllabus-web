@@ -105,7 +105,7 @@ const SearchSubject: Component = () => {
         let idx = 0;
         let colors = [
             "#072448", "#3e4491", "#ffcb00", "#f8aa4b", "#ff6150",
-            "#ff6150", "#309975", "#dad873", "#dad873", "#efeeb4",
+            "#e74645", "#fb7756", "#facd60", "#cac751", "#1ac0c6",
             "#f9b4ab", "#f9b4ab", "#264e70", "#679186", "#679186",
         ];
         let colorTable: { [key: string]: string } = {};
