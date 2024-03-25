@@ -1,10 +1,17 @@
-import {Accessor, createEffect, For, Index, Show} from "solid-js";
+import {Accessor, createEffect, createSignal, For, Index, Show} from "solid-js";
 import {createColumnHelper, createSolidTable, flexRender, getCoreRowModel} from "@tanstack/solid-table";
-import {Subject} from "../types/graphql";
+import {Semester, Subject} from "../types/graphql";
 import {createStore} from "solid-js/store";
 import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} from "../types/enum";
+import {Syllabus} from "../types/syllabus";
+import {getSubjectsSyllabus} from "../graphql";
+import SyllabusViewer from "./SyllabusViewer";
 
 const SubjectTable = (props: {
+    yearSemester: Accessor<{
+        year: number,
+        semester: Semester
+    }>,
     subjects: Accessor<Subject[]>,
 }) => {
     const [expand, setExpand] = createStore(props.subjects().map(() => false));
@@ -12,6 +19,18 @@ const SubjectTable = (props: {
     createEffect(() => {
         setExpand(props.subjects().map(() => false));
     }, props.subjects());
+
+    const [syllabus, setSyllabus] = createSignal<Syllabus | null>(null);
+    const [showSyllabus, setShowSyllabus] = createSignal(false);
+
+    const openSyllabus = async (code: string) => {
+        setSyllabus(JSON.parse((await getSubjectsSyllabus({
+            year: props.yearSemester().year,
+            semester: props.yearSemester().semester,
+            code: [code]
+        })).subject.find(subject => subject.code === code)!.syllabus ?? "null"));
+        setShowSyllabus(true);
+    };
 
     const columnHelper = createColumnHelper<Subject>();
     const columns = [
@@ -54,7 +73,17 @@ const SubjectTable = (props: {
                 >
                     자세히보기
                 </div>,
-        })
+        }),
+        columnHelper.display({
+            header: "강의계획서",
+            cell: (props) =>
+                <div
+                    style={{cursor: "pointer"}}
+                    onclick={() => openSyllabus(props.row.original.code)}
+                >
+                    열기
+                </div>,
+        }),
     ];
 
     const table = createSolidTable({
@@ -86,45 +115,53 @@ const SubjectTable = (props: {
         ]
     ];
 
-    return <table>
-        <thead>
-        <For each={table.getHeaderGroups()}>{(row, i) =>
-            <tr>
-                <For each={row.headers}>{(header, j) =>
-                    <th style={{width: `${header.column.getSize()}px`}}>{flexRender(header.column.columnDef.header, header.getContext())}</th>}</For>
-            </tr>
-        }</For>
-        </thead>
-        <tbody>
-        <Index each={table.getCoreRowModel().rows}>{(row) =>
-            <>
+    return <>
+        <table>
+            <thead>
+            <For each={table.getHeaderGroups()}>{(row, i) =>
                 <tr>
-                    <Index each={row().getVisibleCells()}>{cell =>
-                        <td style={{"text-align": "center"}}>{flexRender(cell().column.columnDef.cell, cell().getContext())}</td>
-                    }</Index>
+                    <For each={row.headers}>{(header, j) =>
+                        <th style={{width: `${header.column.getSize()}px`}}>{flexRender(header.column.columnDef.header, header.getContext())}</th>}</For>
                 </tr>
-                <Show when={expand[row().index]}>
+            }</For>
+            </thead>
+            <tbody>
+            <Index each={table.getCoreRowModel().rows}>{(row) =>
+                <>
                     <tr>
-                        <td style={{"flex-direction": "column"}} colSpan={row().getVisibleCells().length}>
-                            <div style={{padding: "2rem 3rem", margin: "0 auto"}}>
-                                <Index each={detailInfo(row().original)}>{a =>
-                                    <div style={{display: "flex", "justify-content": "space-between", "margin-bottom": "1rem"}}>
-                                        <Index each={a()}>{value =>
-                                            <div style={{flex: 1, "align-self": "flex-start", display: "flex", "margin-right": "1rem"}}>
-                                                <div style={{"margin-right": "0.5rem"}}>{value()[0]}</div>
-                                                <div style={{"white-space": "pre-line", flex: 1}}>{value()[1]}</div>
-                                            </div>
-                                        }</Index>
-                                    </div>
-                                }</Index>
-                            </div>
-                        </td>
+                        <Index each={row().getVisibleCells()}>{cell =>
+                            <td style={{"text-align": "center"}}>{flexRender(cell().column.columnDef.cell, cell().getContext())}</td>
+                        }</Index>
                     </tr>
-                </Show>
-            </>
-        }</Index>
-        </tbody>
-    </table>;
+                    <Show when={expand[row().index]}>
+                        <tr>
+                            <td style={{"flex-direction": "column"}} colSpan={row().getVisibleCells().length}>
+                                <div style={{padding: "2rem 3rem", margin: "0 auto"}}>
+                                    <Index each={detailInfo(row().original)}>{a =>
+                                        <div style={{display: "flex", "justify-content": "space-between", "margin-bottom": "1rem"}}>
+                                            <Index each={a()}>{value =>
+                                                <div style={{flex: 1, "align-self": "flex-start", display: "flex", "margin-right": "1rem"}}>
+                                                    <div style={{"margin-right": "0.5rem"}}>{value()[0]}</div>
+                                                    <div style={{"white-space": "pre-line", flex: 1}}>{value()[1]}</div>
+                                                </div>
+                                            }</Index>
+                                        </div>
+                                    }</Index>
+                                </div>
+                                {/*<button style={{width: "100%"}} onclick={() => openSyllabus(row().original.code)}>*/}
+                                {/*    강의계획서 보기*/}
+                                {/*</button>*/}
+                            </td>
+                        </tr>
+                    </Show>
+                </>
+            }</Index>
+            </tbody>
+        </table>
+        <Show when={showSyllabus()}>
+            <SyllabusViewer syllabus={syllabus()} setShowSyllabus={setShowSyllabus}></SyllabusViewer>
+        </Show>
+    </>;
 };
 
 export default SubjectTable;

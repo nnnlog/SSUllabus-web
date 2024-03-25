@@ -160,13 +160,11 @@ const SearchSubject: Component = () => {
                     filterName={"타전공인정 : "}
                 ></FilterMultipleOption>
             </div>
-            <button onclick={fetchSubjectData}>
+            <button onclick={fetchSubjectData} style={{width: "100%", padding: ".5rem", "font-size": "16px"}}>
                 조회
             </button>
-            <div>
-                Showing information about {yearSemester().year}년도 {SemesterValue[yearSemester().semester]}
-            </div>
-            <SubjectTable subjects={subjects}/>
+            <div style={{"margin-top": "3rem"}}></div>
+            <SubjectTable subjects={subjects} yearSemester={yearSemester}/>
         </div>
     );
 };

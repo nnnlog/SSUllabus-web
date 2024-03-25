@@ -212,7 +212,7 @@ export type SubjectsSyllabusQueryVariables = Exact<{
 }>;
 
 
-export type SubjectsSyllabusQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', syllabus?: string | null }> };
+export type SubjectsSyllabusQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', code: string, syllabus?: string | null }> };
 
 export type SubjectsSimpleQueryVariables = Exact<{
   year: Scalars['Int']['input'];
@@ -295,6 +295,7 @@ export const SubjectsDocument = gql`
 export const SubjectsSyllabusDocument = gql`
     query subjectsSyllabus($year: Int!, $semester: Semester!, $code: [String!]!) {
   subject(year: $year, semester: $semester, code: $code) {
+    code
     syllabus
   }
 }
