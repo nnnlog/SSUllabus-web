@@ -97,11 +97,11 @@ const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Set
         [
             {
                 key: "주교재",
-                value: props.syllabus.grade_scale,
+                value: props.syllabus.textbook_main,
             },
             {
                 key: "부교재",
-                value: props.syllabus.grade_rule,
+                value: props.syllabus.textbook_sub,
             },
             {
                 key: "수업유형",
