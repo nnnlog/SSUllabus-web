@@ -6,6 +6,7 @@ import SelectYearSemester from "../components/filter/SelectYearSemester";
 import FilterMultipleOption from "../components/filter/filterMultipleOption";
 import {GradeRuleValue, GradeScaleValue, LanguageValue, SemesterValue, SubjectProcessValue} from "../types/enum";
 import SubjectTable from "../components/SubjectTable";
+import BooleanOption from "../components/filter/booleanOption";
 
 const SearchSubject: Component = () => {
     const [yearSemester, setYearSemester] = createSignal<{
@@ -159,6 +160,30 @@ const SearchSubject: Component = () => {
                     placeholder={"(모두)"}
                     filterName={"타전공인정 : "}
                 ></FilterMultipleOption>
+                <BooleanOption
+                    initialValue={query.is_el ?? undefined}
+                    onChange={v => {
+                        if (v === 1) setQuery("is_el", undefined);
+                        else setQuery("is_el", v === 2);
+                    }}
+                    filterName={"Engaged Learning 여부 : "}
+                ></BooleanOption>
+                <BooleanOption
+                    initialValue={query.is_capstone ?? undefined}
+                    onChange={v => {
+                        if (v === 1) setQuery("is_capstone", undefined);
+                        else setQuery("is_capstone", v === 2);
+                    }}
+                    filterName={"캡스톤디자인 여부 : "}
+                ></BooleanOption>
+                <BooleanOption
+                    initialValue={query.limited_target ?? undefined}
+                    onChange={v => {
+                        if (v === 1) setQuery("limited_target", undefined);
+                        else setQuery("limited_target", v === 2);
+                    }}
+                    filterName={"대상외수강제한 여부 : "}
+                ></BooleanOption>
             </div>
             <button onclick={fetchSubjectData} style={{width: "100%", padding: ".5rem", "font-size": "16px"}}>
                 조회

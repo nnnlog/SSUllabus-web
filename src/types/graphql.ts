@@ -113,6 +113,7 @@ export type QuerySubjectArgs = {
   credit?: InputMaybe<Array<Scalars['Float']['input']>>;
   grade_rule?: InputMaybe<Array<GradeRule>>;
   grade_scale?: InputMaybe<Array<GradeScale>>;
+  is_capstone?: InputMaybe<Scalars['Boolean']['input']>;
   is_el?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Array<Scalars['String']['input']>>;
   lang?: InputMaybe<Array<Language>>;
@@ -142,6 +143,7 @@ export type Subject = {
   credit: Scalars['Float']['output'];
   grade_rule: GradeRule;
   grade_scale: GradeScale;
+  is_capstone: Scalars['Boolean']['output'];
   is_el: Scalars['Boolean']['output'];
   lang: Language;
   limited_target: Scalars['Boolean']['output'];
@@ -188,6 +190,7 @@ export type SubjectsQueryVariables = Exact<{
   grade_rule?: InputMaybe<Array<GradeRule>>;
   lang?: InputMaybe<Array<Language>>;
   is_el?: InputMaybe<Scalars['Boolean']['input']>;
+  is_capstone?: InputMaybe<Scalars['Boolean']['input']>;
   limited_target?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Array<Scalars['String']['input']>>;
   code?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -203,7 +206,7 @@ export type SubjectsQueryVariables = Exact<{
 }>;
 
 
-export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, professor?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'SubjectLectureRoomTime', place?: string | null, day: string, time_start: string, time_end: string }> | null }> };
+export type SubjectsQuery = { __typename?: 'Query', subject: Array<{ __typename?: 'Subject', year: number, semester: Semester, grade_scale: GradeScale, grade_rule: GradeRule, lang: Language, is_el: boolean, is_capstone: boolean, limited_target: boolean, code: string, name: string, bunban?: string | null, process: SubjectProcess, open_department?: string | null, professor?: string | null, credit: number, listen_count: number, remain_count: number, target?: string | null, majors: Array<string>, multi_majors: Array<string>, time_place?: Array<{ __typename?: 'SubjectLectureRoomTime', place?: string | null, day: string, time_start: string, time_end: string }> | null }> };
 
 export type SubjectsSyllabusQueryVariables = Exact<{
   year: Scalars['Int']['input'];
@@ -242,7 +245,7 @@ export type LectureRoomTimeTableQuery = { __typename?: 'Query', lecture_room_tim
 
 
 export const SubjectsDocument = gql`
-    query subjects($year: Int!, $semester: Semester!, $grade_scale: [GradeScale!], $grade_rule: [GradeRule!], $lang: [Language!], $is_el: Boolean, $limited_target: Boolean, $keyword: [String!], $code: [String!], $bunban: [String!], $open_department: [String!], $credit: [Float!], $listen_count: [IntSectionQuery!], $remain_count: [IntSectionQuery!], $process: [SubjectProcess!], $target: [String!], $majors: [String!], $multi_majors: [String!]) {
+    query subjects($year: Int!, $semester: Semester!, $grade_scale: [GradeScale!], $grade_rule: [GradeRule!], $lang: [Language!], $is_el: Boolean, $is_capstone: Boolean, $limited_target: Boolean, $keyword: [String!], $code: [String!], $bunban: [String!], $open_department: [String!], $credit: [Float!], $listen_count: [IntSectionQuery!], $remain_count: [IntSectionQuery!], $process: [SubjectProcess!], $target: [String!], $majors: [String!], $multi_majors: [String!]) {
   subject(
     year: $year
     semester: $semester
@@ -250,6 +253,7 @@ export const SubjectsDocument = gql`
     grade_rule: $grade_rule
     lang: $lang
     is_el: $is_el
+    is_capstone: $is_capstone
     limited_target: $limited_target
     keyword: $keyword
     code: $code
@@ -269,6 +273,7 @@ export const SubjectsDocument = gql`
     grade_rule
     lang
     is_el
+    is_capstone
     limited_target
     code
     name
