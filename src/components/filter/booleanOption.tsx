@@ -23,7 +23,7 @@ const BooleanOption = (props: {
                 initialValue={selectedValue()}
                 format={(data) => values[data as keyof typeof values]}
                 onChange={v => {
-                    if (v === null) return;
+                    v = parseInt(v);
                     setSelectedValue(v);
                     props.onChange(selectedValue());
                 }}
