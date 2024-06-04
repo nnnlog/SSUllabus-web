@@ -1,13 +1,12 @@
 import { Select } from "@thisbeyond/solid-select";
 import {createMemo, createSignal} from "solid-js";
 
-const FilterSingleOption = <T extends string, >(props: {
+const FilterSingleOption = <T, >(props: {
     text: any,
     initialValue: T,
     onChange: (selected: T) => any,
 
     filterName: string,
-    placeholder: string,
 }) => {
     const [selectedValue, setSelectedValue] = createSignal(props.initialValue);
     const [input, setInput] = createSignal("");
@@ -27,7 +26,6 @@ const FilterSingleOption = <T extends string, >(props: {
                     setSelectedValue(v);
                     props.onChange(selectedValue());
                 }}
-                placeholder={props.placeholder}
                 readonly={false}
                 onInput={v => setInput(v)}
             />
