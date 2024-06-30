@@ -14,7 +14,7 @@ const SearchSubject: Component = () => {
         semester: Semester
     }>({
         year: 2024,
-        semester: Semester.First
+        semester: Semester.Second
     });
 
     const [query, setQuery] = createStore<SubjectsQueryVariables>({
