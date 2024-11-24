@@ -6,7 +6,7 @@ import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} fro
 import {Syllabus} from "../../types/syllabus";
 import {getSubjectsSyllabus} from "../../graphql";
 import SyllabusViewer from "../SyllabusViewer";
-import './SubjectTable.module.css';
+import styles from './SubjectTable.module.css';
 
 const SubjectTable = (props: {
     yearSemester: Accessor<{
@@ -117,7 +117,7 @@ const SubjectTable = (props: {
     ];
 
     return <>
-        <table>
+        <table class={styles.table}>
             <thead>
             <For each={table.getHeaderGroups()}>{(row, i) =>
                 <tr>

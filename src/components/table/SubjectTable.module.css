@@ -1,10 +1,10 @@
-table {
+.table {
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
 }
 
-th, td {
+.table th, .table td {
     width: calc(100% / 11);
     padding: 5px;
     text-align: center;
@@ -14,7 +14,7 @@ th, td {
     border: 1px solid #ddd;
 }
 
-th {
+.table th {
     background-color: #d8e4ff;
     color: #333;
 }
@@ -29,7 +29,7 @@ th {
         gap: 5px;
     }
 
-    option{
+    option {
         font-size: 0.6rem;
     }
 
@@ -42,7 +42,7 @@ th {
         margin-left: 0;
     }
 
-    .additional-options>li{
+    .additional-options > li {
         font-size: 0.7rem;
     }
 
@@ -52,7 +52,7 @@ th {
         margin: 10px 0;
     }
 
-    table th, table td {
+    .table th, .table td {
         font-size: 0.8rem;
         padding: 5px;
     }
@@ -68,7 +68,7 @@ th {
         width: 100%;
     }
 
-    th, td {
+    .table th, .table td {
         font-size: 0.1rem;
     }
 
