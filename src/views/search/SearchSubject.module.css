@@ -1,0 +1,223 @@
+.filterColumns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 5px;
+    margin: 30px;
+    margin-bottom: 0px;
+}
+
+.filterColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    width: 250px auto;
+}
+
+.filter-group label {
+    margin: 10px;
+    white-space: nowrap;
+    min-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 5px 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    color: rgb(107, 111, 111);
+    font-weight: bold;
+}
+
+.buttonRow {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.search-button {
+    margin-left: auto;
+    margin-right: 30px;
+    padding: 0px 120px;
+    background-color: #1a73e8;
+    height: 40px;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.search-button:hover {
+    background-color: #003586;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.result {
+    margin-top: 10px;
+}
+
+.search-text {
+    height: 40px;
+    border-radius: 20px;
+    width: 500px;
+    text-indent: 10px;
+    border: 1px solid #ccc;
+    margin-left: 30px;
+}
+
+.search-text:focus {
+    outline: none;
+    border: 1px solid #2130ce;
+}
+
+.search-text:hover {
+    border: 1px solid #2130ce;
+}
+
+.trait-viewer {
+    display: flex;
+    margin-left: 20px;
+}
+
+.search-options {
+    width: 100%;
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-options > li {
+    width: auto;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 20px;
+    padding: 0 8px;
+    margin-right: 5px;
+    background-color: rgb(132, 132, 132);
+    color: white;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-op-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: white;
+    margin-right: 3px;
+    font-size: 0.8rem;
+}
+
+.additional-options {
+    list-style-type: none;
+    background-color: none;
+    display: flex;
+    padding-left: 20px;
+}
+
+.additional-options > li > button {
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 32px;
+    padding: 0px 2px
+}
+
+.additional-options > li {
+    background-color: gray;
+    border-radius: 20px;
+    color: white;
+    font-size: 14px;
+    padding: 1px 10px;
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px; /* 작은 화면에서 내부 여백 축소 */
+    }
+
+    .filterColumns {
+        margin: 10px;
+        gap: 5px;
+    }
+
+    option {
+        font-size: 0.6rem;
+    }
+
+    .filter-group {
+        max-width: 100%;
+    }
+
+    .search-text {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .additional-options > li {
+        font-size: 0.7rem;
+    }
+
+    .search-button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    table th, table td {
+        font-size: 0.8rem;
+        padding: 5px;
+    }
+}
+
+@media (max-width: 500px) {
+    .filterColumns {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    th, td {
+        font-size: 0.1rem;
+    }
+
+    .search-button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
