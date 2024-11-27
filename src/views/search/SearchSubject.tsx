@@ -60,6 +60,10 @@ const SearchSubject: Component = () => {
 
     createEffect(fetchCurrentSemesterData, [yearSemester()]);
 
+    const addSearchKeyword = () => {
+
+    };
+
     return (
         <>
             <section class={styles["search-form"]}>
@@ -178,24 +182,35 @@ const SearchSubject: Component = () => {
                     </div>
                 </div>
                 <div class={styles["buttonRow"]}>
-                    <input id="search-text" type="text" placeholder="검색어 키워드를 입력하세요.(과목명,과목코드,교수명,대상 검색)"/>
-                    <div class={styles["trait-viewer"]}>
-                        <ul class={styles["search-options"]}>
+                    <input class={styles["search-text"]} type="text" placeholder="검색어 키워드를 추가하세요. (과목명, 과목코드, 교수명)"
+                           onkeyup={event => {
+                               if (event.code !== "Enter") return;
+                               if (event.currentTarget.value.length === 0) return;
+
+                               if (query.keyword) {
+                                   if (query.keyword.includes(event.currentTarget.value)) return;
+                                   setQuery("keyword", query.keyword.length, event.currentTarget.value);
+                               } else {
+                                   setQuery("keyword", [event.currentTarget.value]);
+                               }
+                               event.currentTarget.value = "";
+                           }}/>
+                    <button class={styles["search-button"]} onClick={addSearchKeyword}>추가</button>
+                    <button class={styles["search-button"]} style="margin-left: auto;"
+                            onClick={fetchSubjectData}>조회
+                    </button>
+                </div>
+                <div class={styles["trait-viewer"]}>
+                    <ul class={styles["search-options"]}>
+                        <Index each={query.keyword}>{(keyword, i) =>
                             <li>
-                                <button class={styles["search-op-btn"]}>x</button>
-                                전공
+                                {keyword()}
+                                <button class={styles["search-op-btn"]}
+                                        onClick={() => setQuery("keyword", value => value?.length === 1 ? undefined : [...value!.slice(0, i), ...value!.slice(i + 1)])}>x
+                                </button>
                             </li>
-                            <li>
-                                <button class={styles["search-op-btn"]}>x</button>
-                                학년도
-                            </li>
-                            <li>
-                                <button class={styles["search-op-btn"]}>x</button>
-                                과정
-                            </li>
-                        </ul>
-                    </div>
-                    <button class={styles["search-button"]} onclick={fetchSubjectData}>조회</button>
+                        }</Index>
+                    </ul>
                 </div>
             </section>
 

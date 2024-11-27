@@ -73,7 +73,7 @@ const SearchSubject: Component = () => {
 
         const pixelsPerMinute = 1;
 
-        canvas.width = window.innerWidth * 0.9;
+        canvas.width = window.innerWidth * 0.8;
         canvas.height = (endTime - startTime + 1) * pixelsPerMinute + 100 + 50;
 
         let order: { [key: string]: number } = {"일": 0, "월": 1, "화": 2, "수": 3, "목": 4, "금": 5, "토": 6};

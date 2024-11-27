@@ -1,11 +1,17 @@
 import {Accessor, createEffect, createSignal, For, Index, Show} from "solid-js";
-import {createColumnHelper, createSolidTable, flexRender, getCoreRowModel} from "@tanstack/solid-table";
+import {
+    createColumnHelper,
+    createSolidTable,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel
+} from "@tanstack/solid-table";
 import {Semester, Subject} from "../../types/graphql";
 import {createStore} from "solid-js/store";
 import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} from "../../types/enum";
 import {Syllabus} from "../../types/syllabus";
 import {getSubjectsSyllabus} from "../../graphql";
-import SyllabusViewer from "../SyllabusViewer";
+import SyllabusViewer from "../syllabus/SyllabusViewer";
 import styles from './SubjectTable.module.css';
 
 const SubjectTable = (props: {
@@ -25,11 +31,16 @@ const SubjectTable = (props: {
     const [showSyllabus, setShowSyllabus] = createSignal(false);
 
     const openSyllabus = async (code: string) => {
-        setSyllabus(JSON.parse((await getSubjectsSyllabus({
+        let data = (await getSubjectsSyllabus({
             year: props.yearSemester().year,
             semester: props.yearSemester().semester,
             code: [code]
-        })).subject.find(subject => subject.code === code)!.syllabus ?? "null"));
+        })).subject.find(subject => subject.code === code)!.syllabus;
+        if (data === null || data === undefined) {
+            alert("강의계획서가 없는 과목입니다.");
+            return;
+        }
+        setSyllabus(JSON.parse(data));
         setShowSyllabus(true);
     };
 
@@ -37,10 +48,15 @@ const SubjectTable = (props: {
     const columns = [
         columnHelper.accessor("code", {
             header: "과목코드",
+            enableHiding: true,
+            enableResizing: true,
+            enableSorting: true,
+            enableColumnFilter: true,
+            enableGrouping: true,
+            filterFn: "equals"
         }),
         columnHelper.accessor("name", {
             header: "과목명",
-            size: 100,
         }),
         columnHelper.accessor("bunban", {
             header: "분반",
@@ -60,7 +76,6 @@ const SubjectTable = (props: {
         columnHelper.accessor("process", {
             header: "과정",
             cell: props1 => <>{SubjectProcessValue[props1.getValue()]}</>,
-            enableResizing: true,
         }),
         columnHelper.accessor("target", {
             header: "수강대상",
@@ -72,7 +87,7 @@ const SubjectTable = (props: {
                     style={{cursor: "pointer"}}
                     onclick={() => setExpand(props.row.index, a => !a)}
                 >
-                    자세히보기
+                    {expand[props.row.index] ? "닫기" : "자세히보기"}
                 </div>,
         }),
         columnHelper.display({
@@ -93,9 +108,15 @@ const SubjectTable = (props: {
             return props.subjects();
         },
         getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        enableFilters: true,
+        enableColumnFilters: true,
     });
 
-    const detailInfo: (subject: Subject) => [string, string][][] = (subject) => [
+    table.getColumn("code")!.setFilterValue("5006762801");
+    console.log(table.getColumn("code")!.getFilterValue());
+
+    const getDetailInformation: (subject: Subject) => [string, string][][] = (subject) => [
         [
             ["이수구분 :", subject.majors.join(", ")],
             ["타전공 인정 :", subject.multi_majors.join(", ")],
@@ -140,7 +161,7 @@ const SubjectTable = (props: {
                         <tr>
                             <td style={{"flex-direction": "column"}} colSpan={row().getVisibleCells().length}>
                                 <div style={{padding: "2rem 3rem", margin: "0 auto"}}>
-                                    <Index each={detailInfo(row().original)}>{a =>
+                                    <Index each={getDetailInformation(row().original)}>{a =>
                                         <div style={{
                                             display: "flex",
                                             "justify-content": "space-between",

@@ -1,8 +1,8 @@
-import {Syllabus} from "../types/syllabus";
+import {Syllabus} from "../../types/syllabus";
 import {createMemo, Index, onCleanup, onMount, Setter, Show} from "solid-js";
 import {Portal} from "solid-js/web";
 
-import styles from "./styles.module.css";
+import styles from "./SyllabusViewer.module.css";
 
 const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Setter<boolean> }) => {
     const header = createMemo<({
@@ -138,11 +138,9 @@ const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Set
     const weeks = createMemo(() => props.syllabus ? props.syllabus.week : []);
 
     onMount(() => {
-        document.body.style.height = "100vh";
         document.body.style.overflowY = "hidden";
     });
     onCleanup(() => {
-        document.body.style.height = "";
         document.body.style.overflowY = "";
     });
 
@@ -152,6 +150,7 @@ const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Set
         </div>}>
             <div class={styles.overlay} onClick={() => props.setShowSyllabus(false)}></div>
             <div class={styles.popup}>
+                <div class={styles.close} onClick={() => props.setShowSyllabus(false)}>X</div>
                 <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>강의 개요</div>
                 <table class={styles.table}>
                     <tbody>
@@ -160,7 +159,8 @@ const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Set
                             <Index each={row()}>{keyValue =>
                                 <>
                                     <td class={styles.tableDatumKey}>{keyValue().key}</td>
-                                    <td class={styles.tableDatumValue} colSpan={keyValue().colspan ?? 1}>{keyValue().value}</td>
+                                    <td class={styles.tableDatumValue}
+                                        colSpan={keyValue().colspan ?? 1}>{keyValue().value}</td>
                                 </>
                             }</Index>
                         </tr>

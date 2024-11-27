@@ -43,6 +43,19 @@
     border-collapse: collapse;
 }
 
+.close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+
+    width: fit-content;
+
+    font-size: 1.5rem;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
 .tableRow {
     width: 100%;
 }

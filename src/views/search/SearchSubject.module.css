@@ -49,9 +49,9 @@ select {
 }
 
 .search-button {
-    margin-left: auto;
+    margin-left: 1rem;
     margin-right: 30px;
-    padding: 0px 120px;
+    padding: 0 3rem;
     background-color: #1a73e8;
     height: 40px;
     color: white;

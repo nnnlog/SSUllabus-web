@@ -7,6 +7,7 @@ const FilterSingleOption = <T, >(props: {
     onChange: (selected: T) => any,
 
     filterName: string,
+    placeholder: string,
 }) => {
     const [selectedValue, setSelectedValue] = createSignal(props.initialValue);
     const [input, setInput] = createSignal("");
@@ -28,6 +29,7 @@ const FilterSingleOption = <T, >(props: {
                 }}
                 readonly={false}
                 onInput={v => setInput(v)}
+                placeholder={props.placeholder}
             />
         </div>
     </div>
