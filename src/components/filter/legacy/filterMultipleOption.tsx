@@ -1,6 +1,6 @@
 import { Select } from "@thisbeyond/solid-select";
 import {createMemo, createSignal} from "solid-js";
-import generateRandomString from "../../utils/generateRandomString";
+import generateRandomString from "../../../utils/generateRandomString";
 
 const FilterMultipleOption = <T, >(props: {
     text: any,

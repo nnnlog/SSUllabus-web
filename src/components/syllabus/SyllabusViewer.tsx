@@ -3,8 +3,9 @@ import {createMemo, Index, onCleanup, onMount, Setter, Show} from "solid-js";
 import {Portal} from "solid-js/web";
 
 import styles from "./SyllabusViewer.module.css";
+import overlayStyles from "../common/Modal.module.css";
 
-const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Setter<boolean> }) => {
+const SyllabusViewer = (props: { syllabus: Syllabus, setShowSyllabus: Setter<boolean> }) => {
     const header = createMemo<({
         key: string,
         value: string,
@@ -145,98 +146,94 @@ const SyllabusViewer = (props: { syllabus: Syllabus | null, setShowSyllabus: Set
     });
 
     return <Portal>
-        <Show when={props.syllabus !== null} fallback={<div>
-            강의 계획서 정보가 없습니다.
-        </div>}>
-            <div class={styles.overlay} onClick={() => props.setShowSyllabus(false)}></div>
-            <div class={styles.popup}>
-                <div class={styles.close} onClick={() => props.setShowSyllabus(false)}>X</div>
-                <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>강의 개요</div>
-                <table class={styles.table}>
-                    <tbody>
-                    <Index each={header()}>{row =>
-                        <tr style={styles.tableRow}>
-                            <Index each={row()}>{keyValue =>
-                                <>
-                                    <td class={styles.tableDatumKey}>{keyValue().key}</td>
-                                    <td class={styles.tableDatumValue}
-                                        colSpan={keyValue().colspan ?? 1}>{keyValue().value}</td>
-                                </>
-                            }</Index>
-                        </tr>
-                    }</Index>
-                    </tbody>
-                </table>
-                <div style={{"margin-top": "3rem"}}></div>
-                <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>첨부파일</div>
-                <table class={styles.table}>
-                    <thead>
-                    <tr>
-                        <th class={styles.tableDatumKey}>파일명</th>
-                        <th class={styles.tableDatumKey}>다운로드</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <Show when={files().length > 0} fallback={
-                        <tr>
-                            <td class={styles.tableDatumValue} colspan={2}>파일 없음</td>
-                        </tr>
-                    }>
-                        <Index each={files()}>{row =>
-                            <tr style={styles.tableRow}>
-                                <td class={styles.tableDatumValue}>{row().name}</td>
-                                <td class={styles.tableDatumValue}><a href={row().url} target={"_blank"}>다운로드</a></td>
-                            </tr>
+        <div class={overlayStyles.overlay} onClick={() => props.setShowSyllabus(false)}></div>
+        <div classList={{[overlayStyles.popup]: true, [styles.popup]: true}}>
+            <div class={styles.close} onClick={() => props.setShowSyllabus(false)}>X</div>
+            <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>강의 개요</div>
+            <table class={styles.table}>
+                <tbody>
+                <Index each={header()}>{row =>
+                    <tr style={styles.tableRow}>
+                        <Index each={row()}>{keyValue =>
+                            <>
+                                <td class={styles.tableDatumKey}>{keyValue().key}</td>
+                                <td class={styles.tableDatumValue}
+                                    colSpan={keyValue().colspan ?? 1}>{keyValue().value}</td>
+                            </>
                         }</Index>
-                    </Show>
-                    </tbody>
-                </table>
-                <div style={{"margin-top": "3rem"}}></div>
-                <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>평가 기준</div>
-                <table class={styles.table}>
-                    <thead>
-                    <tr>
-                        <th class={styles.tableDatumKey}>평가항목</th>
-                        <th class={styles.tableDatumKey}>각 항목별 만점 (100점)</th>
-                        <th class={styles.tableDatumKey}>반영비율 (합계 100%)</th>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <Index each={grading()}>{row =>
+                }</Index>
+                </tbody>
+            </table>
+            <div style={{"margin-top": "3rem"}}></div>
+            <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>첨부파일</div>
+            <table class={styles.table}>
+                <thead>
+                <tr>
+                    <th class={styles.tableDatumKey}>파일명</th>
+                    <th class={styles.tableDatumKey}>다운로드</th>
+                </tr>
+                </thead>
+                <tbody>
+                <Show when={files().length > 0} fallback={
+                    <tr>
+                        <td class={styles.tableDatumValue} colspan={2}>파일 없음</td>
+                    </tr>
+                }>
+                    <Index each={files()}>{row =>
                         <tr style={styles.tableRow}>
                             <td class={styles.tableDatumValue}>{row().name}</td>
-                            <td class={styles.tableDatumValue}>{row().score}</td>
-                            <td class={styles.tableDatumValue}>{row().weighted_score}</td>
+                            <td class={styles.tableDatumValue}><a href={row().url} target={"_blank"}>다운로드</a></td>
                         </tr>
                     }</Index>
-                    </tbody>
-                </table>
-                <div style={{"margin-top": "3rem"}}></div>
-                <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>주차별 계획</div>
-                <table class={styles.table}>
-                    <thead>
-                    <tr>
-                        <th class={styles.tableDatumKey}>주차</th>
-                        <th class={styles.tableDatumKey}>핵심어</th>
-                        <th class={styles.tableDatumKey}>세부내용</th>
-                        <th class={styles.tableDatumKey}>교수방법</th>
-                        <th class={styles.tableDatumKey}>교재범위</th>
+                </Show>
+                </tbody>
+            </table>
+            <div style={{"margin-top": "3rem"}}></div>
+            <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>평가 기준</div>
+            <table class={styles.table}>
+                <thead>
+                <tr>
+                    <th class={styles.tableDatumKey}>평가항목</th>
+                    <th class={styles.tableDatumKey}>각 항목별 만점 (100점)</th>
+                    <th class={styles.tableDatumKey}>반영비율 (합계 100%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <Index each={grading()}>{row =>
+                    <tr style={styles.tableRow}>
+                        <td class={styles.tableDatumValue}>{row().name}</td>
+                        <td class={styles.tableDatumValue}>{row().score}</td>
+                        <td class={styles.tableDatumValue}>{row().weighted_score}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <Index each={weeks()}>{row =>
-                        <tr style={styles.tableRow}>
-                            <td class={styles.tableDatumValue}>{row().week}</td>
-                            <td class={styles.tableDatumValue}>{row().coreword}</td>
-                            <td class={styles.tableDatumValue}>{row().detail}</td>
-                            <td class={styles.tableDatumValue}>{row().teaching_way}</td>
-                            <td class={styles.tableDatumValue}>{row().textbook}</td>
-                        </tr>
-                    }</Index>
-                    </tbody>
-                </table>
-            </div>
-        </Show>
+                }</Index>
+                </tbody>
+            </table>
+            <div style={{"margin-top": "3rem"}}></div>
+            <div style={{"font-size": "22px", "font-weight": "bold", "margin-bottom": "1rem"}}>주차별 계획</div>
+            <table class={styles.table}>
+                <thead>
+                <tr>
+                    <th class={styles.tableDatumKey}>주차</th>
+                    <th class={styles.tableDatumKey}>핵심어</th>
+                    <th class={styles.tableDatumKey}>세부내용</th>
+                    <th class={styles.tableDatumKey}>교수방법</th>
+                    <th class={styles.tableDatumKey}>교재범위</th>
+                </tr>
+                </thead>
+                <tbody>
+                <Index each={weeks()}>{row =>
+                    <tr style={styles.tableRow}>
+                        <td class={styles.tableDatumValue}>{row().week}</td>
+                        <td class={styles.tableDatumValue}>{row().coreword}</td>
+                        <td class={styles.tableDatumValue}>{row().detail}</td>
+                        <td class={styles.tableDatumValue}>{row().teaching_way}</td>
+                        <td class={styles.tableDatumValue}>{row().textbook}</td>
+                    </tr>
+                }</Index>
+                </tbody>
+            </table>
+        </div>
     </Portal>
         ;
 };

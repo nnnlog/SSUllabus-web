@@ -1,0 +1,76 @@
+.filterIcon {
+    color: #1a73e8;
+    font-size: 1.3rem;
+    border: 1px solid #1a73e8;
+    border-radius: .3rem;
+    margin-right: .5rem;
+    transition: .3s;
+}
+
+.filterIcon:hover {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.popup {
+    width: 50vw;
+    height: 50vh;
+}
+
+.allOptions {
+    display: flex;
+    margin-bottom: .5rem;
+}
+
+.allOptions > * {
+    margin-right: .5rem;
+}
+
+.result {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.searchBox {
+    height: 70%;
+
+    overflow-y: auto;
+
+    border: 1px solid black;
+    border-radius: 1rem;
+    padding: .5rem;
+}
+
+.option {
+    text-overflow: ellipsis;
+}
+
+.input {
+    width: 100%;
+    margin-top: .5rem;
+    height: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 2rem;
+    padding: 0 .5rem;
+    text-indent: 1rem;
+}
+
+.close {
+    height: 2rem;
+    width: 100%;
+    margin-top: .5rem;
+    border: none;
+    border-radius: 2rem;
+    padding: 0 .5rem;
+    text-align: center;
+    background: #1a73e8;
+    transition: .3s;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+.close:hover {
+    background-color: #003586;
+}

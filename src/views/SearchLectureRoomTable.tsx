@@ -2,7 +2,7 @@ import {Accessor, Component, createEffect, createMemo, createSignal, onCleanup, 
 import {CurrentSemesterDataQuery, LectureRoomTimeTable, LectureRoomTimeTableQueryVariables, Semester, Subject, SubjectsSimpleQuery} from "../types/graphql";
 import {getCurrentSemesterData, getLectureRoomTimeTable, getSubjectsSimple} from "../graphql";
 import SelectYearSemester from "../components/filter/SelectYearSemester";
-import FilterSingleOption from "../components/filter/filterSingleOption";
+import FilterSingleOption from "../components/filter/legacy/filterSingleOption";
 
 const SearchSubject: Component = () => {
     const [yearSemester, setYearSemester] = createSignal<{

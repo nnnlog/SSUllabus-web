@@ -1,6 +1,6 @@
 import {Accessor, Setter} from "solid-js";
 import {Semester} from "../../types/graphql";
-import FilterSingleOption from "./filterSingleOption";
+import FilterSingleOption from "./legacy/filterSingleOption";
 import {SemesterValue, SemesterValues} from "../../types/enum";
 
 const SelectYearSemester = (props: { setYearSemester: Setter<{ year: number; semester: Semester; }>; yearSemester: Accessor<{ year: number, semester: Semester }> }) => {

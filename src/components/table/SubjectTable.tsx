@@ -191,8 +191,8 @@ const SubjectTable = (props: {
             }</Index>
             </tbody>
         </table>
-        <Show when={showSyllabus()}>
-            <SyllabusViewer syllabus={syllabus()} setShowSyllabus={setShowSyllabus}></SyllabusViewer>
+        <Show when={showSyllabus() && syllabus() !== null}>
+            <SyllabusViewer syllabus={syllabus()!} setShowSyllabus={setShowSyllabus}></SyllabusViewer>
         </Show>
     </>;
 };
