@@ -14,7 +14,8 @@
 
 .popup {
     width: 50vw;
-    height: 50vh;
+    min-height: 50vh;
+    height: fit-content;
 }
 
 .allOptions {
@@ -33,7 +34,7 @@
 }
 
 .searchBox {
-    height: 70%;
+    height: max(20rem, 20vh);
 
     overflow-y: auto;
 
