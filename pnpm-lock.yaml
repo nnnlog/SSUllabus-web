@@ -23,6 +23,9 @@ importers:
       '@thisbeyond/solid-select':
         specifier: ^0.15.0
         version: 0.15.0(solid-js@1.9.3)
+      ag-grid-community:
+        specifier: ^32.3.3
+        version: 32.3.3
       graphql-fetch:
         specifier: ^1.0.1
         version: 1.0.1
@@ -35,6 +38,9 @@ importers:
       scope-extensions-js:
         specifier: ^1.1.0
         version: 1.1.0
+      solid-ag-grid:
+        specifier: ^0.0.210
+        version: 0.0.210(solid-js@1.9.3)
       solid-js:
         specifier: ^1.9.3
         version: 1.9.3
@@ -1040,6 +1046,15 @@ packages:
     resolution: {integrity: sha512-rvUtU/xKKl/av5EIwyqfw7w0R+hx+tQrlhpIyFr27MwJRlUb+xcYv97kOmp7FE/WmQ8s+Tb6bcD6W8o/s2pGWw==}
     engines: {node: '>=18.0.0'}
 
+  ag-charts-types@10.3.3:
+    resolution: {integrity: sha512-8rmyquaTkwfP4Lzei/W/cbkq9wwEl8+grIo3z97mtxrMIXh9sHJK1oJipd/u08MmBZrca5Jjtn5F1+UNPu/4fQ==}
+
+  ag-grid-community@31.1.1:
+    resolution: {integrity: sha512-tiQZ7VQ07yJScTMIQpaYoUMPgiyXMwYDcwTxe4riRrcYGTg0e258XEihoPUZFejR60P1fYWMxdJaR2JUnyhGrg==}
+
+  ag-grid-community@32.3.3:
+    resolution: {integrity: sha512-KhSJ3B6mwRFA4cLjNjOZkDndJBh8o83794ZHl4Q7xP9MJf43oCN9qoZ8pyBanohgpVfLcP0scYYCr9xIlzjdiA==}
+
   agent-base@7.1.1:
     resolution: {integrity: sha512-H0TSyFNDMomMNJQBn8wFV5YC/2eJ+VXECwOadZJT554xP6cODZHPX3H9QMQECxvrgiSOP1pHjy1sMWQVYJOUOA==}
     engines: {node: '>= 14'}
@@ -1931,6 +1946,11 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
+
+  solid-ag-grid@0.0.210:
+    resolution: {integrity: sha512-vANrlg034gGG6GMNt/WRnlSY0tTyzeMeB1uPF2frMcnfSBxnsUfydy5K1JJ8DWLtmOA1qoTux8aMBb9Qqnp+6A==}
+    peerDependencies:
+      solid-js: '>=1.0.0'
 
   solid-devtools@0.30.1:
     resolution: {integrity: sha512-axpXL4JV1dnGhuei+nSGS8ewGeNkmIgFDsAlO90YyYY5t8wU1R0aYAQtL+I+5KICLKPBvfkzdcFa2br7AV4lAw==}
@@ -3429,6 +3449,14 @@ snapshots:
       fast-querystring: 1.1.2
       tslib: 2.8.1
 
+  ag-charts-types@10.3.3: {}
+
+  ag-grid-community@31.1.1: {}
+
+  ag-grid-community@32.3.3:
+    dependencies:
+      ag-charts-types: 10.3.3
+
   agent-base@7.1.1:
     dependencies:
       debug: 4.3.7
@@ -4402,6 +4430,11 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.6.3
+
+  solid-ag-grid@0.0.210(solid-js@1.9.3):
+    dependencies:
+      ag-grid-community: 31.1.1
+      solid-js: 1.9.3
 
   solid-devtools@0.30.1(solid-js@1.9.3)(vite@5.4.11(@types/node@22.10.0)):
     dependencies:

@@ -33,3 +33,11 @@ a {
 * {
     box-sizing: border-box;
 }
+
+/* Here: table */
+.ag-theme-material .ag-cell-value {
+    /*line-height: 1rem !important;*/
+}
+.ag-theme-material {
+    --ag-grid-size: 0.3rem !important;
+}

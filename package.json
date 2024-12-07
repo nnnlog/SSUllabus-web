@@ -22,14 +22,16 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.9",
+    "@iconify-icon/solid": "^2.1.1",
     "@solidjs/router": "^0.15.1",
     "@tanstack/solid-table": "^8.20.5",
     "@thisbeyond/solid-select": "^0.15.0",
     "graphql-fetch": "^1.0.1",
     "graphql-request": "^7.1.2",
     "graphql-tag": "^2.12.6",
-    "solid-js": "^1.9.3",
     "scope-extensions-js": "^1.1.0",
-    "@iconify-icon/solid": "^2.1.1"
+    "solid-ag-grid": "^0.0.210",
+    "solid-js": "^1.9.3",
+    "ag-grid-community": "^32.3.3"
   }
 }

@@ -29,10 +29,6 @@ const SingleOptionFilter = <T extends (string | number | boolean), >(props: {
         return obj;
     });
 
-    createEffect(() => {
-        console.log(props.filterName, props.values, selectedValue());
-    });
-
     return <div style={{display: "flex", "justify-content": "space-between", flex: 1, "align-items": "center"}}>
         <label for={props.filterName}
                style={{"white-space": "nowrap", "margin-right": "0.5rem"}}>{props.filterName}</label>

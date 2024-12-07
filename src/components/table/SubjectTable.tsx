@@ -1,18 +1,13 @@
-import {Accessor, createEffect, createSignal, For, Index, Show} from "solid-js";
-import {
-    createColumnHelper,
-    createSolidTable,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel
-} from "@tanstack/solid-table";
+import {Accessor, createSignal, For} from "solid-js";
 import {Semester, Subject} from "../../types/graphql";
-import {createStore} from "solid-js/store";
-import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} from "../../types/enum";
 import {Syllabus} from "../../types/syllabus";
 import {getSubjectsSyllabus} from "../../graphql";
-import SyllabusViewer from "../syllabus/SyllabusViewer";
-import styles from './SubjectTable.module.css';
+import {GradeRuleValue, GradeScaleValue, LanguageValue, SubjectProcessValue} from "../../types/enum";
+import AgGridSolid from "solid-ag-grid";
+import {SizeColumnsToContentStrategy} from "ag-grid-community";
+
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 
 const SubjectTable = (props: {
     yearSemester: Accessor<{
@@ -21,12 +16,6 @@ const SubjectTable = (props: {
     }>,
     subjects: Accessor<Subject[]>,
 }) => {
-    const [expand, setExpand] = createStore(props.subjects().map(() => false));
-
-    createEffect(() => {
-        setExpand(props.subjects().map(() => false));
-    }, props.subjects());
-
     const [syllabus, setSyllabus] = createSignal<Syllabus | null>(null);
     const [showSyllabus, setShowSyllabus] = createSignal(false);
 
@@ -44,157 +33,70 @@ const SubjectTable = (props: {
         setShowSyllabus(true);
     };
 
-    const columnHelper = createColumnHelper<Subject>();
-    const columns = [
-        columnHelper.accessor("code", {
-            header: "과목코드",
-            enableHiding: true,
-            enableResizing: true,
-            enableSorting: true,
-            enableColumnFilter: true,
-            enableGrouping: true,
-            filterFn: "equals"
-        }),
-        columnHelper.accessor("name", {
-            header: "과목명",
-        }),
-        columnHelper.accessor("bunban", {
-            header: "분반",
-        }),
-        columnHelper.accessor("professor", {
-            header: "교수명",
-        }),
-        columnHelper.accessor("listen_count", {
-            header: "수강인원",
-        }),
-        columnHelper.accessor("remain_count", {
-            header: "여석",
-        }),
-        columnHelper.accessor("credit", {
-            header: "학점",
-        }),
-        columnHelper.accessor("process", {
-            header: "과정",
-            cell: props1 => <>{SubjectProcessValue[props1.getValue()]}</>,
-        }),
-        columnHelper.accessor("target", {
-            header: "수강대상",
-        }),
-        columnHelper.display({
-            header: "상세정보",
-            cell: (props) =>
-                <div
-                    style={{cursor: "pointer"}}
-                    onclick={() => setExpand(props.row.index, a => !a)}
-                >
-                    {expand[props.row.index] ? "닫기" : "자세히보기"}
-                </div>,
-        }),
-        columnHelper.display({
-            header: "강의계획서",
-            cell: (props) =>
-                <div
-                    style={{cursor: "pointer"}}
-                    onclick={() => openSyllabus(props.row.original.code)}
-                >
-                    열기
-                </div>,
-        }),
-    ];
+    const defaultColDef = {
+        sortable: true,
+        filter: true,
+        autoHeight: true,
+        wrapText: true,
+        // cellStyle: { 'white-space': 'pre' }
+    };
 
-    const table = createSolidTable({
-        columns,
-        get data() {
-            return props.subjects();
+    const columnTypes = {};
+
+    const columnDefs = [
+        {field: "code", headerName: "과목코드"},
+        {field: "name", headerName: "과목명"},
+        {field: "bunban", headerName: "분반"},
+        {field: "credit", headerName: "학점"},
+        {field: "prefessor", headerName: "교수명"},
+        {field: "listen_count", headerName: "수강 인원"},
+        {field: "remain_count", headerName: "여석"},
+        {field: "majors", headerName: "이수구분", valueGetter: (value: { data: Subject }) => value.data.majors.join(", ")},
+        {field: "multi_majors", headerName: "이수구분(타전공 인정)"},
+        {field: "target", headerName: "수강 대상"},
+        {field: "limited_target", headerName: "대상외수강제한 여부"},
+        {
+            field: "time_place",
+            headerName: "시간/강의실",
+            valueGetter: (value: {
+                data: Subject
+            }) => value.data.time_place?.map(a => `${a.day} (${a.place}) - ${a.time_start} : ${a.time_end}`)?.join("\n") ?? "",
+            cellRenderer: (params: { value: string }) => {
+                return <><For each={params.value.split("\n")}>{i => <p style={{margin: 0}}>{i}</p>}</For></>;
+            },
         },
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        enableFilters: true,
-        enableColumnFilters: true,
-    });
-
-    table.getColumn("code")!.setFilterValue("5006762801");
-    console.log(table.getColumn("code")!.getFilterValue());
-
-    const getDetailInformation: (subject: Subject) => [string, string][][] = (subject) => [
-        [
-            ["이수구분 :", subject.majors.join(", ")],
-            ["타전공 인정 :", subject.multi_majors.join(", ")],
-            ["개설학과 :", subject.open_department ?? "(알수없음)"],
-        ],
-        [
-            ["성적 스케일 :", GradeScaleValue[subject.grade_scale]],
-            ["성적 평가 방법 :", GradeRuleValue[subject.grade_rule]],
-            ["강의 언어 :", LanguageValue[subject.lang]],
-        ],
-        [
-            ["대상외수강제한 :", subject.limited_target ? "Y" : "N"],
-            ["Engaged Larning :", subject.is_el ? "Y" : "N"],
-            ["", ""]
-        ],
-        [
-            ["시간/강의실 :", subject.time_place?.map(a => `${a.day} (${a.place}) - ${a.time_start} : ${a.time_end}`)?.join("\n") ?? "-"],
-        ]
+        {
+            field: "grade_scale",
+            headerName: "성적 스케일",
+            valueGetter: (value: { data: Subject }) => GradeScaleValue[value.data.grade_scale]
+        },
+        {
+            field: "grade_rule",
+            headerName: "성적 평가 방식",
+            valueGetter: (value: { data: Subject }) => GradeRuleValue[value.data.grade_rule]
+        },
+        {field: "lang", headerName: "강의 언어", valueGetter: (value: { data: Subject }) => LanguageValue[value.data.lang]},
+        {field: "is_el", headerName: "EL 여부"},
+        {field: "is_capstone", headerName: "캡스톤 여부"},
+        {field: "open_department", headerName: "개설 학과"},
+        {
+            field: "process",
+            headerName: "과정",
+            valueGetter: (value: { data: Subject }) => SubjectProcessValue[value.data.process]
+        },
     ];
 
-    return <>
-        <table class={styles.table}>
-            <thead>
-            <For each={table.getHeaderGroups()}>{(row, i) =>
-                <tr>
-                    <For each={row.headers}>{(header, j) =>
-                        <th>{header.column.columnDef.header?.toString()}</th>}
-                        {/*<th style={{width: `${header.column.getSize()}px`}}>{flexRender(header.column.columnDef.header, header.getContext())}</th>}*/}
-                    </For>
-                </tr>
-            }</For>
-            </thead>
-            <tbody>
-            <Index each={table.getCoreRowModel().rows}>{(row) =>
-                <>
-                    <tr>
-                        <Index each={row().getVisibleCells()}>{cell =>
-                            <td style={{"text-align": "center"}}>{flexRender(cell().column.columnDef.cell, cell().getContext())}</td>
-                        }</Index>
-                    </tr>
-                    <Show when={expand[row().index]}>
-                        <tr>
-                            <td style={{"flex-direction": "column"}} colSpan={row().getVisibleCells().length}>
-                                <div style={{padding: "2rem 3rem", margin: "0 auto"}}>
-                                    <Index each={getDetailInformation(row().original)}>{a =>
-                                        <div style={{
-                                            display: "flex",
-                                            "justify-content": "space-between",
-                                            "margin-bottom": "1rem"
-                                        }}>
-                                            <Index each={a()}>{value =>
-                                                <div style={{
-                                                    flex: 1,
-                                                    "align-self": "flex-start",
-                                                    display: "flex",
-                                                    "margin-right": "1rem"
-                                                }}>
-                                                    <div style={{"margin-right": "0.5rem"}}>{value()[0]}</div>
-                                                    <div style={{"white-space": "pre-line", flex: 1}}>{value()[1]}</div>
-                                                </div>
-                                            }</Index>
-                                        </div>
-                                    }</Index>
-                                </div>
-                                {/*<button style={{width: "100%"}} onclick={() => openSyllabus(row().original.code)}>*/}
-                                {/*    강의계획서 보기*/}
-                                {/*</button>*/}
-                            </td>
-                        </tr>
-                    </Show>
-                </>
-            }</Index>
-            </tbody>
-        </table>
-        <Show when={showSyllabus() && syllabus() !== null}>
-            <SyllabusViewer syllabus={syllabus()!} setShowSyllabus={setShowSyllabus}></SyllabusViewer>
-        </Show>
-    </>;
+    const autoSizeStrategy: SizeColumnsToContentStrategy = {
+        type: 'fitCellContents',
+        colIds: []
+    };
+
+    return <div class="ag-theme-material">
+        <AgGridSolid domLayout='autoHeight' defaultColDef={defaultColDef} columnDefs={columnDefs}
+                     rowData={props.subjects()} pagination={true} paginationPageSize={50}
+                     paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
+                     autoSizeStrategy={autoSizeStrategy}></AgGridSolid>
+    </div>;
 };
 
 export default SubjectTable;
