@@ -19,10 +19,7 @@ const SingleOptionFilter = <T extends (string | number | boolean), >(props: {
 
     const valueMap = createMemo(() => {
         let obj: {
-            [k in string]: {
-            value: T,
-            display: string | undefined | null,
-        } | undefined;
+            [k in string]: { value: T; display: string | undefined | null; } | undefined;
         } = {} as any;
 
         for (let {value, display} of props.values) {
