@@ -1,5 +1,12 @@
 import {GraphQLClient} from 'graphql-request'
-import {CurrentSemesterDataQueryVariables, getSdk, LectureRoomTimeTableQueryVariables, SubjectsQueryVariables, SubjectsSimpleQueryVariables, SubjectsSyllabusQueryVariables} from "../types/graphql";
+import {
+    CurrentSemesterDataQueryVariables,
+    getSdk,
+    LectureRoomTimeTableQueryVariables,
+    SubjectsQueryVariables,
+    SubjectsSimpleQueryVariables,
+    SubjectsSyllabusQueryVariables
+} from "../types/graphql";
 
 const api = import.meta.env.DEV ? `https://ssullabus.nlog.dev/graphql` : `${location.origin}/graphql`;
 // const api = ;

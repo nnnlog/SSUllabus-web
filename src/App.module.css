@@ -7,41 +7,22 @@ body {
     background: linear-gradient(rgba(20, 189, 219, 0.8), rgba(33, 48, 206, 0.8));
 }
 
-.main-wrapper {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    padding: 20px 20px 20px 20px;
-    box-sizing: border-box;
+.title {
+    margin: 2rem 0 1rem 3rem;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 300;
 }
 
-/*h1 {*/
-/*    position: absolute;*/
-/*    top: 20px;*/
-/*    width: 100%;*/
-/*    text-align: left;*/
-/*    margin-left: 5%;*/
-/*    color: white;*/
-/*    font-size: 2rem;*/
-/*    z-index: 10;*/
-/*}*/
-
 .container {
-    width: 90%;
+    width: calc(100vw - 6rem);
+    margin: 0 auto;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
     padding: 20px 20px 30px 20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-}
-
-.title {
-    margin: 25px 0 0 5%;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 300;
 }
 
 .links {
@@ -52,9 +33,3 @@ body {
     column-gap: 20px;
     margin-left: 20px;
 }
-
-/*.links .active {*/
-/*    text-decoration: none;*/
-/*    font-size: 1.1rem;*/
-/*    color: #333;*/
-/*}*/

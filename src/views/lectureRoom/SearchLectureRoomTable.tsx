@@ -1,16 +1,20 @@
 import {Accessor, Component, createEffect, createMemo, createSignal, onCleanup, onMount, Show} from "solid-js";
-import {CurrentSemesterDataQuery, LectureRoomTimeTable, LectureRoomTimeTableQueryVariables, Semester, Subject, SubjectsSimpleQuery} from "../types/graphql";
-import {getCurrentSemesterData, getLectureRoomTimeTable, getSubjectsSimple} from "../graphql";
-import SelectYearSemester from "../components/filter/SelectYearSemester";
-import FilterSingleOption from "../components/filter/legacy/filterSingleOption";
+import {
+    CurrentSemesterDataQuery,
+    LectureRoomTimeTable,
+    LectureRoomTimeTableQueryVariables,
+    Semester,
+    Subject,
+    SubjectsSimpleQuery
+} from "../../types/graphql";
+import {getCurrentSemesterData, getLectureRoomTimeTable, getSubjectsSimple} from "../../graphql";
+import YearSemesterOptionFilter from "../../components/filter/single/YearSemesterOptionFilter";
+import SingleOptionFilter from "../../components/filter/single/SingleOptionFilter";
 
 const SearchSubject: Component = () => {
-    const [yearSemester, setYearSemester] = createSignal<{
-        year: number,
-        semester: Semester
-    }>({
+    const [yearSemester, setYearSemester] = createSignal({
         year: 2024,
-        semester: Semester.First
+        semester: Semester.Second
     });
 
     const [building, setBuilding] = createSignal("");
@@ -37,22 +41,20 @@ const SearchSubject: Component = () => {
     }));
 
     const lectureRoomBuilding = createMemo(() => {
-        let data = currentSemesterData().lecture_rooms;
-        data = Array.from(new Set(data.map(a => a.split(" ")[0])));
-        return data.reduce((a, b) => ({...a, [b]: b}), {});
+        return Array.from(new Set(currentSemesterData().lecture_rooms.map(a => a.split(" ")[0])));
     });
 
     const lectureRooms = createMemo(() => {
-        let data = currentSemesterData().lecture_rooms;
-        data = Array.from(new Set(data.filter(a => a.split(" ")[0] === building()).map(a => a.split(" ").slice(1).join(" "))));
-        return data.reduce((a, b) => ({...a, [b]: b}), {});
+        return Array.from(new Set(currentSemesterData().lecture_rooms.filter(a => a.split(" ")[0] === building()).map(a => a.split(" ").slice(1).join(" "))));
     });
 
-    createEffect(fetchCurrentSemesterData, yearSemester());
+    createEffect(fetchCurrentSemesterData);
 
     const [data, setData] = createSignal<LectureRoomTimeTable[]>([]);
     const [subjectsData, setSubjectsData] = createSignal<SubjectsSimpleQuery>();
-    const subjectsDataKey: Accessor<{ [name: string]: Subject }> = createMemo(() => subjectsData()?.subject?.reduce((a, b) => ({
+    const subjectsDataKey: Accessor<{
+        [name: string]: Subject
+    }> = createMemo(() => subjectsData()?.subject?.reduce((a, b) => ({
         ...a,
         [b.code]: b
     }), {}) ?? {});
@@ -186,30 +188,25 @@ const SearchSubject: Component = () => {
 
     return (
         <div style={{width: "90%", margin: "3rem auto 0 auto"}}>
-            <div style={{display: "flex", "justify-content": "space-between", "border-bottom": "1px solid black", "padding-bottom": "1rem"}}>
-                <SelectYearSemester setYearSemester={setYearSemester} yearSemester={yearSemester}></SelectYearSemester>
-            </div>
+            <YearSemesterOptionFilter
+                onChanged={(year, semester) => setYearSemester({year, semester})}></YearSemesterOptionFilter>
             <div style={{display: "flex", "flex-direction": "column", flex: 1, "justify-content": "space-between",}}>
-                <FilterSingleOption
-                    text={lectureRoomBuilding()}
-                    initialValue={building()}
-                    onChange={v => {
-                        if (v === null) setBuilding("");
-                        else setBuilding(v);
-                    }}
-                    placeholder={"강의실 건물을 선택하세요."}
-                    filterName={"건물 : "}
-                ></FilterSingleOption>
-                <FilterSingleOption
-                    text={lectureRooms()}
-                    initialValue={lectureRoom()}
-                    onChange={v => {
-                        if (v === null) setLectureRoom("");
-                        else setLectureRoom(v);
-                    }}
-                    placeholder={"강의실을 선택하세요."}
-                    filterName={"강의실 : "}
-                ></FilterSingleOption>
+                <div style={{
+                    "display": "flex",
+                    "justify-content": "space-between",
+                    "margin-bottom": "2rem",
+                    width: "100%",
+                    "gap": "1rem",
+                }}>
+                    <SingleOptionFilter defaultValue={building()} values={lectureRoomBuilding().map(i => ({
+                        value: i,
+                        display: i,
+                    }))} onChanged={v => setBuilding(v)} filterName={"건물"}></SingleOptionFilter>
+                    <SingleOptionFilter defaultValue={lectureRoom()} values={lectureRooms().map(i => ({
+                        value: i,
+                        display: i,
+                    }))} onChanged={v => setLectureRoom(v)} filterName={"강의실"}></SingleOptionFilter>
+                </div>
             </div>
             <Show when={data() !== null}>
                 <canvas ref={canvas}></canvas>

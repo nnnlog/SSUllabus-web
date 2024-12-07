@@ -4,9 +4,9 @@ import {render} from 'solid-js/web';
 import './index.css';
 import App from './App';
 import 'solid-devtools'
-import {HashRouter, Route, Router} from "@solidjs/router";
+import {HashRouter, Route} from "@solidjs/router";
 import searchSubject from "./views/search/SearchSubject";
-import searchLectureRoomTable from "./views/SearchLectureRoomTable";
+import searchLectureRoomTable from "./views/lectureRoom/SearchLectureRoomTable";
 
 const root = document.getElementById('root');
 

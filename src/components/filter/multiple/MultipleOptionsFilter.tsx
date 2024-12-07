@@ -1,4 +1,4 @@
-import {createMemo, createSignal, For, Show} from "solid-js";
+import {createEffect, createMemo, createSignal, For, Show} from "solid-js";
 import {Portal} from "solid-js/web";
 import overlayStyles from "../../common/Modal.module.css";
 import styles from "./MultipleOptionsFilter.module.css";
@@ -15,6 +15,10 @@ const MultipleOptionsFilter = <T extends (string | number | boolean), >(props: {
     onChanged: (selected: T[]) => any,
 }) => {
     const [selectedValue, setSelectedValue] = createSignal(props.defaultValues ?? []);
+
+    createEffect(() => {
+        setSelectedValue(props.defaultValues ?? []);
+    });
 
     const [showingModal, setShowingModal] = createSignal(false);
     const [input, setInput] = createSignal("");
@@ -51,8 +55,8 @@ const MultipleOptionsFilter = <T extends (string | number | boolean), >(props: {
 
     const showingSelectedValues = createMemo(() => {
             let values = selectedValue().map(k => valueMap()[k.toString()]!).map(convertToDisplay).filter(v => v.includes(input()));
-            if (values.length === 0) return "(없음)";
             if (values.length === props.values.length) return "(전체)";
+            if (values.length === 0) return "(없음)";
             return values.join(", ");
         }
     );
@@ -71,7 +75,12 @@ const MultipleOptionsFilter = <T extends (string | number | boolean), >(props: {
 
     return <>
         <div onclick={() => setShowingModal(true)}
-             style={{cursor: "pointer", "max-width": "25rem", display: "flex", "align-items": "center", "align-content": "center"}}>
+             style={{
+                 cursor: "pointer",
+                 display: "flex",
+                 "align-items": "center",
+                 "align-content": "center",
+             }}>
             <Icon icon={"material-symbols:filter-alt-outline"} class={styles.filterIcon}></Icon>
             <div style={{"margin-right": ".2rem", "white-space": "nowrap", width: "fit-content"}}>
                 {props.filterName} :
@@ -119,49 +128,13 @@ const MultipleOptionsFilter = <T extends (string | number | boolean), >(props: {
                         </For>
                     </div>
                     <input class={styles.input} type={"text"} value={input()} placeholder={"검색할 옵션을 입력하세요."}
-                           onInput={(e) => setInput(e.currentTarget.value)}/>
+                           onInput={(e) => setInput(e.currentTarget.value)}
+                           autofocus={true}/>
                     <button class={styles.close} onclick={() => closeModal()}>닫기</button>
                 </div>
             </Portal>
         </Show>
     </>;
-    // return <div style={{display: "flex", "justify-content": "space-between", "align-items": "center", "font-size": "15px"}}>
-    //     <div style={{display: "flex", "flex-wrap": "wrap"}}>
-    //         <For each={selectedValue()}>{(value, i) =>
-    //             <div style={{
-    //                 "background-color": "#f0f0f0",
-    //                 "border-radius": "5px",
-    //                 "padding": "0.5rem",
-    //                 "margin": "0.5rem",
-    //                 "display": "flex",
-    //                 "align-items": "center",
-    //             }}>
-    //                 <span>{(props.values.find(v => v.value === value)?.display ?? value).toString()}</span>
-    //                 <button style={{"margin-left": "0.5rem"}} onClick={() => setSelectedValue(selectedValue().filter(v => v !== value))}>X</button>
-    //             </div>
-    //         }</For>
-    //         <input type="text" placeholder={props.placeholder} value={input()} onInput={(e) => setInput(e.currentTarget.value)}/>
-    //         <div style={{
-    //             "position": "absolute",
-    //             "background-color": "white",
-    //             "border": "1px solid #ddd",
-    //             "border-radius": "5px",
-    //             "padding": "0.5rem",
-    //             "z-index": 100,
-    //             "width": "100%",
-    //             "max-height": "300px",
-    //             "overflow-y": "auto",
-    //         }}>
-    //             <For each={showingValues()}>{(value, i) =>
-    //                 <div style={{"padding": "0.5rem", "cursor": "pointer"}} onClick={() => {
-    //                     setSelectedValue([...selectedValue(), value.value]);
-    //                     setInput("");
-    //                 }}>{value.display ?? value.value}</div>
-    //             }</For>
-    //         </div>
-    //     </div>
-    //     <button onClick={() => props.onChanged(selectedValue())}>적용</button>
-    // </div>
 };
 
 export default MultipleOptionsFilter;

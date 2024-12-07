@@ -7,6 +7,7 @@ import SubjectTable from "../../components/table/SubjectTable";
 import styles from "./SearchSubject.module.css";
 import MultipleOptionsFilter from "../../components/filter/multiple/MultipleOptionsFilter";
 import MultipleBooleanOptionsFilter from "../../components/filter/multiple/MultipleBooleanOptionsFilter";
+import YearSemesterOptionFilter from "../../components/filter/single/YearSemesterOptionFilter";
 
 const SearchSubject: Component = () => {
     const [yearSemester, setYearSemester] = createSignal<{
@@ -83,13 +84,17 @@ const SearchSubject: Component = () => {
     return (
         <>
             <section class={styles["search-form"]}>
+                <YearSemesterOptionFilter onChanged={(year, semester) => setYearSemester({
+                    year,
+                    semester
+                })}></YearSemesterOptionFilter>
                 <div class={styles["filterColumn"]}>
                     <div class={styles["filter-group"]}>
                         <MultipleOptionsFilter
                             values={GradeScaleValues}
                             defaultValues={GradeScaleValues.map(a => a.value)}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("grade_scale", undefined);
+                                if (v.length === GradeScaleValues.length) setQuery("grade_scale", undefined);
                                 else setQuery("grade_scale", v);
                             }}
                             filterName={"성적 스케일"}
@@ -98,7 +103,7 @@ const SearchSubject: Component = () => {
                             values={GradeRuleValues}
                             defaultValues={GradeRuleValues.map(a => a.value)}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("grade_rule", undefined);
+                                if (v.length === GradeRuleValues.length) setQuery("grade_rule", undefined);
                                 else setQuery("grade_rule", v);
                             }}
                             filterName={"성적 평가 방식"}
@@ -107,7 +112,7 @@ const SearchSubject: Component = () => {
                             values={LanguageValues}
                             defaultValues={LanguageValues.map(a => a.value)}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("lang", undefined);
+                                if (v.length === LanguageValues.length) setQuery("lang", undefined);
                                 else setQuery("lang", v);
                             }}
                             filterName={"강의 언어"}
@@ -121,7 +126,7 @@ const SearchSubject: Component = () => {
                             }], [] as { value: number, display: string }[])}
                             defaultValues={currentSemesterData().credits}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("credit", undefined);
+                                if (v.length === currentSemesterData().credits.length) setQuery("credit", undefined);
                                 else setQuery("credit", v);
                             }}
                             filterName={"학점"}
@@ -130,7 +135,7 @@ const SearchSubject: Component = () => {
                             values={majorLists()}
                             defaultValues={majorLists().map(a => a.value)}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("majors", undefined);
+                                if (v.length === majorLists().length) setQuery("majors", undefined);
                                 else setQuery("majors", v);
                             }}
                             filterName={"이수구분 (주전공)"}
@@ -139,7 +144,7 @@ const SearchSubject: Component = () => {
                             values={multiMajorLists()}
                             defaultValues={multiMajorLists().map(a => a.value)}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("multi_majors", undefined);
+                                if (v.length === multiMajorLists().length) setQuery("multi_majors", undefined);
                                 else setQuery("multi_majors", v);
                             }}
                             filterName={"이수구분 (타전공 인정과목)"}
@@ -164,13 +169,12 @@ const SearchSubject: Component = () => {
                             values={SubjectProcessValues}
                             defaultValues={[SubjectProcess.Haksa]}
                             onChanged={v => {
-                                if (v.length === 0) setQuery("process", undefined);
+                                if (v.length === SubjectProcessValues.length) setQuery("process", undefined);
                                 else setQuery("process", v);
                             }}
                             filterName={"과정"}
                         ></MultipleOptionsFilter>
                     </div>
-                    <div style={{"margin-top": "2rem"}}>TBD (연도/학기 선택)</div>
                 </div>
                 <div class={styles["buttonRow"]}>
                     <input class={styles["search-text"]} type="text"
