@@ -80,7 +80,7 @@ select {
 
 .trait-viewer {
     display: flex;
-    margin-left: 20px;
+    margin-top: 1rem;
 }
 
 .search-options {
@@ -100,7 +100,7 @@ select {
     border: none;
     border-radius: 20px;
     padding: 0 8px;
-    margin-right: 5px;
+    margin-right: 1rem;
     background-color: rgb(132, 132, 132);
     color: white;
     white-space: nowrap;
