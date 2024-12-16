@@ -49,6 +49,7 @@ const SubjectTable = (props: {
             cellRenderer: (value: { data: Subject }) => {
                 return <button onclick={() => openSyllabus(value.data.code)}>열기</button>;
             },
+            width: 130,
         },
         {field: "code", headerName: "과목코드"},
         {field: "name", headerName: "과목명"},
