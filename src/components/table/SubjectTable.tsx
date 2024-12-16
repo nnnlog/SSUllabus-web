@@ -1,4 +1,4 @@
-import {Accessor, createSignal, For} from "solid-js";
+import {Accessor, createSignal, For, Show} from "solid-js";
 import {Semester, Subject} from "../../types/graphql";
 import {Syllabus} from "../../types/syllabus";
 import {getSubjectsSyllabus} from "../../graphql";
@@ -8,6 +8,7 @@ import {SizeColumnsToContentStrategy} from "ag-grid-community";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
+import SyllabusViewer from "../syllabus/SyllabusViewer";
 
 const SubjectTable = (props: {
     yearSemester: Accessor<{
@@ -41,14 +42,19 @@ const SubjectTable = (props: {
         // cellStyle: { 'white-space': 'pre' }
     };
 
-    const columnTypes = {};
-
     const columnDefs = [
+        {
+            field: "syllabus",
+            headerName: "강의 계획서",
+            cellRenderer: (value: { data: Subject }) => {
+                return <button onclick={() => openSyllabus(value.data.code)}>열기</button>;
+            },
+        },
         {field: "code", headerName: "과목코드"},
         {field: "name", headerName: "과목명"},
         {field: "bunban", headerName: "분반"},
         {field: "credit", headerName: "학점"},
-        {field: "prefessor", headerName: "교수명"},
+        {field: "professor", headerName: "교수명"},
         {field: "listen_count", headerName: "수강 인원"},
         {field: "remain_count", headerName: "여석"},
         {field: "majors", headerName: "이수구분", valueGetter: (value: { data: Subject }) => value.data.majors.join(", ")},
@@ -91,12 +97,17 @@ const SubjectTable = (props: {
         colIds: []
     };
 
-    return <div class="ag-theme-material">
-        <AgGridSolid domLayout='autoHeight' defaultColDef={defaultColDef} columnDefs={columnDefs}
-                     rowData={props.subjects()} pagination={true} paginationPageSize={50}
-                     paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
-                     autoSizeStrategy={autoSizeStrategy}></AgGridSolid>
-    </div>;
+    return <>
+        <div class="ag-theme-material">
+            <AgGridSolid domLayout='autoHeight' defaultColDef={defaultColDef} columnDefs={columnDefs}
+                         rowData={props.subjects()} pagination={true} paginationPageSize={50}
+                         paginationPageSizeSelector={[10, 50, 100, 500, 1000, 5000]}
+                         autoSizeStrategy={autoSizeStrategy}></AgGridSolid>
+        </div>
+        <Show when={showSyllabus() && syllabus() !== null}>
+            <SyllabusViewer syllabus={syllabus()!} setShowSyllabus={setShowSyllabus}></SyllabusViewer>
+        </Show>
+    </>;
 };
 
 export default SubjectTable;
